@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "communicationservice.presentation": "StartDebugging",
+        "gameservice.presentation": "StartDebugging",
+        "usersservice.presentation": "StartDebugging"
+      }
+    }
+  }
+}

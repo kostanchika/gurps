@@ -1,0 +1,28 @@
+name: "gurps"
+services:
+  usersservice:
+    image: ${DOCKER_REGISTRY-}gurps/users-service
+    container_name: "UsersService"
+    build:
+      context: .
+      dockerfile: src/UsersService/UsersService.Presentation/Dockerfile
+    ports:
+      - 8080:8080
+
+  gameservice:
+    image: ${DOCKER_REGISTRY-}gurps/game-service
+    container_name: "GameService"
+    build:
+      context: .
+      dockerfile: src/GameService/GameService.Presentation/Dockerfile
+    ports:
+      - 8081:8080
+
+  communicationservice:
+    image: ${DOCKER_REGISTRY-}gurps/communication-service
+    container_name: "CommunicationService"
+    build:
+      context: .
+      dockerfile: src/CommunicationService/CommunicationService.Presentation/Dockerfile
+    ports:
+      - 8082:8080
