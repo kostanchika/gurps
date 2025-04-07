@@ -6,7 +6,6 @@ using UsersService.Application.Interfaces.UseCases.Auth;
 using UsersService.Application.Specifications.Auth;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
-using static UsersService.Application.Validators.ValidationRulesExtension;
 
 namespace UsersService.Application.UseCases.Auth
 {
