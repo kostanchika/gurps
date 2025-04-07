@@ -7,6 +7,7 @@ using UsersService.Application.UseCases.Auth;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using UsersService.Application.Validators.Auth;
+using UsersService.Presentation.Middlewares;
 
 namespace UsersService.Presentation
 {
@@ -34,9 +35,12 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
             builder.Services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
 
+            // Middlewares
+            builder.Services.AddScoped<ExceptionHandlingMiddleware>();
+
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseAuthorization();
 
