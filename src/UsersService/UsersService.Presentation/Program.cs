@@ -27,6 +27,13 @@ namespace UsersService.Presentation
 
             builder.Services.AddControllers();
 
+            // Connections
+            builder.Services.AddDbContext<UsersContext>(options =>
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")
+                    ?? throw new Exception("Missing Postgres connection string")
+                )
+            );
+
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
             builder.Services.AddScoped<IRepository<FriendshipEntity>, Repository<FriendshipEntity>>();

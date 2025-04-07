@@ -8,6 +8,7 @@ namespace UsersService.Infrastructure.Persistence.SQL
         public UsersContext(DbContextOptions<UsersContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

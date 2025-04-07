@@ -6,8 +6,22 @@ services:
     build:
       context: .
       dockerfile: src/UsersService/UsersService.Presentation/Dockerfile
+    depends_on:
+      - usersservicepg
     ports:
       - 8080:8080
+
+  usersservicepg:
+    image: postgres:latest
+    container_name: "UsersServicePostgres"
+    environment:
+      POSTGRES_USER: users_user
+      POSTGRES_PASSWORD: users_password
+      POSTGRES_DB: usersdb
+    volumes:
+      - users_pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
   gameservice:
     image: ${DOCKER_REGISTRY-}gurps/game-service
@@ -26,3 +40,6 @@ services:
       dockerfile: src/CommunicationService/CommunicationService.Presentation/Dockerfile
     ports:
       - 8082:8080
+
+volumes:
+  users_pg_data:
