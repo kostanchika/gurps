@@ -50,6 +50,7 @@ namespace UsersService.Presentation
             // Services
             builder.Services.AddScoped<ITokenService, JWTTokenService>();
             builder.Services.AddScoped<IEmailService, FluentEmailService>();
+            builder.Services.AddScoped<IPasswordService, BCryptPasswordService>();
 
             // Email
             var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>()
