@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using UsersService.Application.Interfaces.Services;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
+using UsersService.Infrastructure.Persistence.Redis;
+using UsersService.Infrastructure.Persistence.Redis.Configurations;
 using UsersService.Infrastructure.Persistence.SQL;
 using UsersService.Application.Interfaces.UseCases.Auth;
 using UsersService.Application.UseCases.Auth;
@@ -33,6 +36,12 @@ namespace UsersService.Presentation
                     ?? throw new Exception("Missing Postgres connection string")
                 )
             );
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                ConnectionMultiplexer.Connect(
+                    builder.Configuration.GetConnectionString("RedisConnection")
+                        ?? throw new Exception("Missing Redis connection string")
+                )
+            );
 
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
@@ -40,6 +49,13 @@ namespace UsersService.Presentation
 
             // Settings
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
+            builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"))
+                .PostConfigure<RedisSettings>(settings =>
+                {
+                    settings.RefreshTokenExpiry = TimeSpan.FromMinutes(settings.RefreshTokenLifetimeMinutes);
+                    settings.RegistrationCodeExpiry = TimeSpan.FromMinutes(settings.RegistrationCodeLifetimeMinutes);
+                    settings.ResetPasswordCodeExpiry = TimeSpan.FromMinutes(settings.ResetPasswordCodeLifetimeMinutes);
+                });
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 
             // Validation
@@ -58,6 +74,7 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<ITokenService, JWTTokenService>();
             builder.Services.AddScoped<IEmailService, FluentEmailService>();
             builder.Services.AddScoped<IPasswordService, BCryptPasswordService>();
+            builder.Services.AddScoped<IKeyValueManager, RedisKeyValueManager>();
 
             // Email
             var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>()
@@ -98,6 +115,9 @@ namespace UsersService.Presentation
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
                     };
                 });
+
+            var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>()
+                ?? throw new Exception("Redis section is missing or bad configured");
 
             var app = builder.Build();
 
