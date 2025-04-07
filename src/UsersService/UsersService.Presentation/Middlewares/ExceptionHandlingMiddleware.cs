@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using System.Text.Json;
 using UsersService.Application.Exceptions;
-using UsersService.Application.Exceptions.Auth;
 
 namespace UsersService.Presentation.Middlewares
 {
@@ -60,13 +59,17 @@ namespace UsersService.Presentation.Middlewares
             {
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-                await HandleExceptionAsync(context, ex);
+                _logger.LogError("An error of type {ExceptionType} occured: {Exception}", ex.GetType(), ex.ToString());
+
+                context.Response.ContentType = "application/json";
+
+                await context.Response.WriteAsJsonAsync(new { context.Response.StatusCode, ex.Message });
             }
         }
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
-            _logger.LogError("An error of type {ExceptionType} occured: {Exception}", ex.GetType(), ex.ToString());
+            _logger.LogError("An error of type {ExceptionType} occured: {Exception}", ex.GetType(), ex.Message);
 
             context.Response.ContentType = "application/json";
 
@@ -75,11 +78,11 @@ namespace UsersService.Presentation.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex, string details)
         {
-            _logger.LogError("An error of type {ExceptionType} occured: {Exception}", ex.GetType(), ex.ToString());
+            _logger.LogError("An error of type {ExceptionType} occured: {Exception}", ex.GetType(), ex.Message);
 
             context.Response.ContentType = "application/json";
 
-            await context.Response.WriteAsJsonAsync(new {context.Response.StatusCode, ex.Message, details});
+            await context.Response.WriteAsJsonAsync(new { context.Response.StatusCode, ex.Message, details });
         }
     }
 }
