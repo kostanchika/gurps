@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using UsersService.Application.Interfaces.Services;
 using UsersService.Domain.Entities;
@@ -31,6 +33,7 @@ namespace UsersService.Presentation
 
             // Settings
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
 
             // Validation
             builder.Services.AddFluentValidationAutoValidation();
@@ -46,6 +49,23 @@ namespace UsersService.Presentation
 
             // Services
             builder.Services.AddScoped<ITokenService, JWTTokenService>();
+            builder.Services.AddScoped<IEmailService, FluentEmailService>();
+
+            // Email
+            var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>()
+                        ?? throw new Exception("Email section is missing or bad configured");
+            builder.Services.AddFluentEmail(emailSettings.Sender, emailSettings.Name)
+                .AddSmtpSender(() => new SmtpClient()
+                {
+                    Host = emailSettings.Host,
+                    Port = emailSettings.Port,
+                    EnableSsl = emailSettings.EnableSSL,
+                    Credentials = new NetworkCredential(
+                        emailSettings.Login,
+                        emailSettings.Password
+                    )
+                });
+
             // Middlewares
             builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
