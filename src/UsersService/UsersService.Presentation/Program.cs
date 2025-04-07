@@ -4,6 +4,9 @@ using UsersService.Domain.Interfaces;
 using UsersService.Infrastructure.Persistence.SQL;
 using UsersService.Application.Interfaces.UseCases.Auth;
 using UsersService.Application.UseCases.Auth;
+using FluentValidation.AspNetCore;
+using FluentValidation;
+using UsersService.Application.Validators.Auth;
 
 namespace UsersService.Presentation
 {
@@ -18,6 +21,10 @@ namespace UsersService.Presentation
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
             builder.Services.AddScoped<IRepository<FriendshipEntity>, Repository<FriendshipEntity>>();
+
+            // Validation
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblyContaining(typeof(RegisterValidator));
 
             // UseCases
             builder.Services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
