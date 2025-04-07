@@ -16,8 +16,8 @@ namespace UsersService.Application.Validators.Auth
                 .MaxLengthWithMessage(ValidationRulesExtension.Username.MaxLength, "Username");
 
             RuleFor(r => r.Password)
-                .MinLengthWithMessage(ValidationRulesExtension.Username.MinLength, "Username")
-                .MaxLengthWithMessage(ValidationRulesExtension.Username.MaxLength, "Username");
+                .MinLengthWithMessage(ValidationRulesExtension.Password.MinLength, "Password")
+                .MaxLengthWithMessage(ValidationRulesExtension.Password.MaxLength, "Password");
 
             RuleFor(r => r.Email)
                 .EmailAddress()
