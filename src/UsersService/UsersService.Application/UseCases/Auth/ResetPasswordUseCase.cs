@@ -47,7 +47,7 @@ namespace UsersService.Application.UseCases.Auth
                 throw new InvalidEmailCodeException(user.Login, "password-reset");
             }
 
-            user.PasswordHash = _passwordService.HashPassword(user.PasswordHash);
+            user.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);
 
             await _userRepository.UpdateAsync(user, ct);
             await _userRepository.SaveChangesAsync(ct);
