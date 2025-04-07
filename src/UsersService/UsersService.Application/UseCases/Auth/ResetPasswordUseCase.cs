@@ -6,6 +6,7 @@ using UsersService.Application.Interfaces.UseCases.Auth;
 using UsersService.Application.Specifications.Auth;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
+using static UsersService.Application.Validators.ValidationRulesExtension;
 
 namespace UsersService.Application.UseCases.Auth
 {
@@ -29,23 +30,23 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(string login, ResetPasswordDto resetPasswordDto, CancellationToken ct)
+        public async Task ExecuteAsync(ResetPasswordDto resetPasswordDto, CancellationToken ct)
         {
             _logger.LogInformation(
-                "Start reseting password for user with Login = '{Login}'",
-                login
+                "Start reseting password for user with Email = '{Email}'",
+                resetPasswordDto.Email
             );
 
-            var resetPasswordCode = await _keyValueManager.GetResetPasswordCodeAsync(login, ct);
+            var user = await _userRepository.GetOneBySpecificationAsync(
+                new UserByEmailSpecification(resetPasswordDto.Email),
+                ct
+            ) ?? throw new UserNotFoundException("Email", resetPasswordDto.Email);
+
+            var resetPasswordCode = await _keyValueManager.GetResetPasswordCodeAsync(user.Login, ct);
             if (resetPasswordCode != resetPasswordDto.ResetPasswordCode)
             {
-                throw new InvalidEmailCodeException(login, "password-reset");
+                throw new InvalidEmailCodeException(user.Login, "password-reset");
             }
-
-            var user = await _userRepository.GetOneBySpecificationAsync(
-                new UserByLoginSpecification(login),
-                ct
-            ) ?? throw new UserNotFoundException("Login", login);
 
             user.PasswordHash = _passwordService.HashPassword(user.PasswordHash);
 
@@ -53,8 +54,8 @@ namespace UsersService.Application.UseCases.Auth
             await _userRepository.SaveChangesAsync(ct);
 
             _logger.LogInformation(
-                "Successfully reset password for user with Login = '{Login}'",
-                login
+                "Successfully reset password for user with Email = '{Email}'",
+                user.Email
             );
         }
     }
