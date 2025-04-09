@@ -29,7 +29,10 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(ResetPasswordDto resetPasswordDto, CancellationToken ct)
+        public async Task ExecuteAsync(
+            ResetPasswordDto resetPasswordDto, 
+            CancellationToken cancellationToken
+        )
         {
             _logger.LogInformation(
                 "Start reseting password for user with Email = '{Email}'",
@@ -38,10 +41,10 @@ namespace UsersService.Application.UseCases.Auth
 
             var user = await _userRepository.GetOneBySpecificationAsync(
                 new UserByEmailSpecification(resetPasswordDto.Email),
-                ct
+                cancellationToken
             ) ?? throw new UserNotFoundException("Email", resetPasswordDto.Email);
 
-            var resetPasswordCode = await _keyValueManager.GetResetPasswordCodeAsync(user.Login, ct);
+            var resetPasswordCode = await _keyValueManager.GetResetPasswordCodeAsync(user.Login, cancellationToken);
             if (resetPasswordCode != resetPasswordDto.ResetPasswordCode)
             {
                 throw new InvalidEmailCodeException(user.Login, "password-reset");
@@ -49,8 +52,8 @@ namespace UsersService.Application.UseCases.Auth
 
             user.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);
 
-            await _userRepository.UpdateAsync(user, ct);
-            await _userRepository.SaveChangesAsync(ct);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+            await _userRepository.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(
                 "Successfully reset password for user with Email = '{Email}'",

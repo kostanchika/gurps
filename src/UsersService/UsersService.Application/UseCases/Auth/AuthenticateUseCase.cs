@@ -32,7 +32,10 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task<AuthResultDto> ExecuteAsync(AuthenticateDto authenticateDto, CancellationToken ct = default)
+        public async Task<AuthResultDto> ExecuteAsync(
+            AuthenticateDto authenticateDto, CancellationToken 
+            cancellationToken = default
+        )
         {
             _logger.LogInformation(
                 "Start authenticating user with Login = '{Login}'",
@@ -41,7 +44,7 @@ namespace UsersService.Application.UseCases.Auth
 
             var user = await _userRepository.GetOneBySpecificationAsync(
                 new UserByLoginSpecification(authenticateDto.Login),
-                ct
+                cancellationToken
             ) ?? throw new UserNotFoundException("Login", authenticateDto.Login);
 
             if (!user.IsEmailConfirmed)
@@ -57,7 +60,7 @@ namespace UsersService.Application.UseCases.Auth
             var accessToken = _tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            await _keyValueManager.SetRefreshTokenAsync(user.Login, refreshToken, ct);
+            await _keyValueManager.SetRefreshTokenAsync(user.Login, refreshToken, cancellationToken);
 
             var authResultDto = new AuthResultDto(
                 accessToken,

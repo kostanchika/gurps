@@ -29,7 +29,10 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(ConfirmEmailDto confirmEmailDto, CancellationToken ct = default)
+        public async Task ExecuteAsync(
+            ConfirmEmailDto confirmEmailDto, 
+            CancellationToken cancellationToken = default
+        )
         {
             _logger.LogInformation(
                 "Start confirming email for user with Email = '{Email}'",
@@ -38,7 +41,7 @@ namespace UsersService.Application.UseCases.Auth
 
             var user = await _userRepository.GetOneBySpecificationAsync(
                 new UserByEmailSpecification(confirmEmailDto.Email),
-                ct
+                cancellationToken
             ) ?? throw new UserNotFoundException("Email", confirmEmailDto.Email);
 
             if (user.IsEmailConfirmed)
@@ -46,22 +49,22 @@ namespace UsersService.Application.UseCases.Auth
                 throw new EmailAlreadyConfirmedException(user.Email);
             }
 
-            var confirmationCode = await _keyValueManager.GetRegistrationCodeAsync(user.Login, ct);
+            var confirmationCode = await _keyValueManager.GetRegistrationCodeAsync(user.Login, cancellationToken);
             if (confirmationCode != confirmEmailDto.ConfirmationCode)
             {
                 if (confirmationCode == null)
                 {
-                    confirmationCode = await _emailService.GenerateEmailCode(ct);
+                    confirmationCode = await _emailService.GenerateEmailCode(cancellationToken);
 
-                    await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, ct);
-                    await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, ct);
+                    await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, cancellationToken);
+                    await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
                 }
                 throw new EmailNotConfirmedException(user.Email);
             }
 
             user.IsEmailConfirmed = true;
-            await _userRepository.UpdateAsync(user, ct);
-            await _userRepository.SaveChangesAsync(ct);
+            await _userRepository.UpdateAsync(user, cancellationToken);
+            await _userRepository.SaveChangesAsync(cancellationToken);
 
             _logger.LogInformation(
                 "Successfully confirmed email for user with Login = '{Login}', Email = '{Email}'",

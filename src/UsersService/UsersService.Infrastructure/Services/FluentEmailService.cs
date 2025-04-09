@@ -13,7 +13,7 @@ namespace UsersService.Infrastructure.Services
             _fluentEmail = fluentEmail;
         }
 
-        public Task<string> GenerateEmailCode(CancellationToken ct = default)
+        public Task<string> GenerateEmailCode(CancellationToken cancellationToken = default)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var code = new string(Enumerable.Range(1, 6)
@@ -22,30 +22,43 @@ namespace UsersService.Infrastructure.Services
             return Task.FromResult(code);
         }
 
-        public async Task SendEmailAsync(string recipient, string header, string body, CancellationToken ct = default)
+        public async Task SendEmailAsync(
+            string recipient, 
+            string header, 
+            string body, 
+            CancellationToken cancellationToken = default
+        )
         {
             await _fluentEmail
                     .To(recipient)
                     .Subject(header)
                     .Body(body)
-                    .SendAsync(ct);
+                    .SendAsync(cancellationToken);
         }
 
-        public async Task SendRegistrationCodeAsync(string recipient, string code, CancellationToken ct = default)
+        public async Task SendRegistrationCodeAsync(
+            string recipient, 
+            string code, 
+            CancellationToken cancellationToken = default
+        )
         {
             var header = "Регистрация на GURPS";
             var body = $"Приятно, что вы с нами! Ваш код для подтверждения адреса электронной почты: {code}";
 
-            await SendEmailAsync(recipient, header, body, ct);
+            await SendEmailAsync(recipient, header, body, cancellationToken);
         }
 
-        public async Task SendResetPasswordCodeAsync(string recipient, string code, CancellationToken ct = default)
+        public async Task SendResetPasswordCodeAsync(
+            string recipient, 
+            string code, 
+            CancellationToken cancellationToken = default
+        )
         {
             var header = "Сброс пароля";
             var body = $"Здравствуйте! Ваш код для сброса пароля: {code}. " +
                        $"Если это были не вы, то проигнорируйте это сообщение";
 
-            await SendEmailAsync(recipient, header, body, ct);
+            await SendEmailAsync(recipient, header, body, cancellationToken);
         }
     }
 }

@@ -4,6 +4,9 @@ namespace UsersService.Application.Interfaces.UseCases.Auth
 {
     public interface IResetPasswordUseCase
     {
-        Task ExecuteAsync(ResetPasswordDto resetPasswordDto, CancellationToken ct = default);
+        Task ExecuteAsync(
+            ResetPasswordDto resetPasswordDto, 
+            CancellationToken cancellationToken = default
+        );
     }
 }

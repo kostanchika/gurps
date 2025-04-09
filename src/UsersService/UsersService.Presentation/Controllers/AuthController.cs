@@ -34,25 +34,34 @@ namespace UsersService.Presentation.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto registerDto, CancellationToken ct)
+        public async Task<IActionResult> Register(
+            RegisterDto registerDto, 
+            CancellationToken cancellationToken
+        )
         {
-            await _registerUseCase.ExecuteAsync(registerDto, ct);
+            await _registerUseCase.ExecuteAsync(registerDto, cancellationToken);
 
             return StatusCode(StatusCodes.Status201Created);
         }
 
         [HttpPost("login")]
-        public async Task<AuthResultDto> Authenticate(AuthenticateDto authenticateDto, CancellationToken ct)
+        public async Task<AuthResultDto> Authenticate(
+            AuthenticateDto authenticateDto, 
+            CancellationToken cancellationToken
+        )
         {
-            var result = await _authenticateUseCase.ExecuteAsync(authenticateDto, ct);
+            var result = await _authenticateUseCase.ExecuteAsync(authenticateDto, cancellationToken);
 
             return result;
         }
 
         [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto, CancellationToken ct)
+        public async Task<IActionResult> ConfirmEmail(
+            ConfirmEmailDto confirmEmailDto, 
+            CancellationToken cancellationToken
+        )
         {
-            await _confirmEmailUseCase.ExecuteAsync(confirmEmailDto, ct);
+            await _confirmEmailUseCase.ExecuteAsync(confirmEmailDto, cancellationToken);
 
             return NoContent();
             ;
@@ -60,23 +69,30 @@ namespace UsersService.Presentation.Controllers
 
         [HttpPost("refresh")]
         [Authorize]
-        public async Task<AuthResultDto> RefreshTokens(RefreshAccessTokenDto refreshAccessTokenDto, CancellationToken ct)
+        public async Task<AuthResultDto> RefreshTokens(
+            RefreshAccessTokenDto refreshAccessTokenDto, 
+            CancellationToken cancellationToken
+        )
         {
-            var result = await _refreshAccessTokenUseCase.ExecuteAsync(User.Identity!.Name!, refreshAccessTokenDto, ct);
+            var result = await _refreshAccessTokenUseCase.ExecuteAsync(
+                User.Identity!.Name!, 
+                refreshAccessTokenDto, 
+                cancellationToken
+            );
 
             return result;
         }
 
         [HttpPost("forgot-password")]
-        public async Task ForgotPassword(ForgotPasswordDto forgotPasswordDto, CancellationToken ct)
+        public async Task ForgotPassword(ForgotPasswordDto forgotPasswordDto, CancellationToken cancellationToken)
         {
-            await _forgotPasswordUseCase.ExecuteAsync(forgotPasswordDto, ct);
+            await _forgotPasswordUseCase.ExecuteAsync(forgotPasswordDto, cancellationToken);
         }
 
         [HttpPost("reset-password")]
-        public async Task ResetPassword(ResetPasswordDto resetPasswordDto, CancellationToken ct)
+        public async Task ResetPassword(ResetPasswordDto resetPasswordDto, CancellationToken cancellationToken)
         {
-            await _resetPasswordUseCase.ExecuteAsync(resetPasswordDto, ct);
+            await _resetPasswordUseCase.ExecuteAsync(resetPasswordDto, cancellationToken);
         }
     }
 }

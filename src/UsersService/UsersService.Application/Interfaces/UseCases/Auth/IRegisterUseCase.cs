@@ -4,6 +4,9 @@ namespace UsersService.Application.Interfaces.UseCases.Auth
 {
     public interface IRegisterUseCase
     {
-        public Task ExecuteAsync(RegisterDto registerDto, CancellationToken ct = default);
+        public Task ExecuteAsync(
+            RegisterDto registerDto, 
+            CancellationToken cancellationToken = default
+        );
     }
 }

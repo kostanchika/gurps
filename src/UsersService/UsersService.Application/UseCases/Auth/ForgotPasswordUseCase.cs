@@ -29,7 +29,10 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(ForgotPasswordDto forgotPasswordDto, CancellationToken ct = default)
+        public async Task ExecuteAsync(
+            ForgotPasswordDto forgotPasswordDto, 
+            CancellationToken cancellationToken = default
+        )
         {
             _logger.LogInformation(
                 "Start sending reset password code to user with Login = '{Login}'",
@@ -38,12 +41,12 @@ namespace UsersService.Application.UseCases.Auth
 
             var user = await _userRepository.GetOneBySpecificationAsync(
                 new UserByLoginSpecification(forgotPasswordDto.Login),
-                ct
+                cancellationToken
             ) ?? throw new UserNotFoundException("Login", forgotPasswordDto.Login);
 
-            var resetPasswordCode = await _emailService.GenerateEmailCode(ct);
-            await _keyValueManager.SetResetPasswordCodeAsync(forgotPasswordDto.Login, resetPasswordCode, ct);
-            await _emailService.SendResetPasswordCodeAsync(user.Email, resetPasswordCode, ct);
+            var resetPasswordCode = await _emailService.GenerateEmailCode(cancellationToken);
+            await _keyValueManager.SetResetPasswordCodeAsync(forgotPasswordDto.Login, resetPasswordCode, cancellationToken);
+            await _emailService.SendResetPasswordCodeAsync(user.Email, resetPasswordCode, cancellationToken);
 
             _logger.LogInformation(
                 "Successfully sent reset password code to user with Login = '{Login}'",

@@ -33,7 +33,10 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task ExecuteAsync(RegisterDto registerDto, CancellationToken ct = default)
+        public async Task ExecuteAsync(
+            RegisterDto registerDto, 
+            CancellationToken cancellationToken = default
+        )
         {
             _logger.LogInformation(
                 "Start registering user with " +
@@ -46,7 +49,7 @@ namespace UsersService.Application.UseCases.Auth
             if (
                 await _userRepository.GetOneBySpecificationAsync(
                     new UserByLoginSpecification(registerDto.Login),
-                    ct
+                    cancellationToken
                 ) != null
             )
             {
@@ -56,7 +59,7 @@ namespace UsersService.Application.UseCases.Auth
             if (
                 await _userRepository.GetOneBySpecificationAsync(
                     new UserByEmailSpecification(registerDto.Email),
-                    ct
+                    cancellationToken
                 ) != null
             )
             {
@@ -74,13 +77,13 @@ namespace UsersService.Application.UseCases.Auth
                 CreatedAt = DateTime.UtcNow,
             };
 
-            await _userRepository.AddAsync(user, ct);
-            await _userRepository.SaveChangesAsync(ct);
+            await _userRepository.AddAsync(user, cancellationToken);
+            await _userRepository.SaveChangesAsync(cancellationToken);
 
-            var confirmationCode = await _emailService.GenerateEmailCode(ct);
+            var confirmationCode = await _emailService.GenerateEmailCode(cancellationToken);
 
-            await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, ct);
-            await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, ct);
+            await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, cancellationToken);
+            await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
 
             _logger.LogInformation(
                 "Successfully registered user with" +

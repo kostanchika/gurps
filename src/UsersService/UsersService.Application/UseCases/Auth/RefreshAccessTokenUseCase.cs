@@ -29,14 +29,18 @@ namespace UsersService.Application.UseCases.Auth
             _logger = logger;
         }
 
-        public async Task<AuthResultDto> ExecuteAsync(string login, RefreshAccessTokenDto refreshAccessTokenDto, CancellationToken ct = default)
+        public async Task<AuthResultDto> ExecuteAsync(
+            string login, 
+            RefreshAccessTokenDto refreshAccessTokenDto, 
+            CancellationToken cancellationToken = default
+        )
         {
             var user = await _userRepository.GetOneBySpecificationAsync(
                 new UserByLoginSpecification(login),
-                ct
+                cancellationToken
             ) ?? throw new UserNotFoundException("Login", login);
 
-            var oldRefreshToken = await _keyValueManager.GetRefreshTokenAsync(login, ct);
+            var oldRefreshToken = await _keyValueManager.GetRefreshTokenAsync(login, cancellationToken);
             if (oldRefreshToken != refreshAccessTokenDto.RefreshToken)
             {
                 throw new InvalidRefreshTokenException(login);
@@ -45,7 +49,7 @@ namespace UsersService.Application.UseCases.Auth
             var accessToken = _tokenService.GenerateAccessToken(user.Id, user.Login, user.Role);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            await _keyValueManager.SetRefreshTokenAsync(user.Login, refreshToken, ct);
+            await _keyValueManager.SetRefreshTokenAsync(user.Login, refreshToken, cancellationToken);
 
             var authResultDto = new AuthResultDto(
                 accessToken,
