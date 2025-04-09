@@ -5,7 +5,7 @@ namespace UsersService.Application.Interfaces.UseCases.Auth
     public interface IAuthenticateUseCase
     {
         Task<AuthResultDto> ExecuteAsync(
-            AuthenticateDto authenticateDto, 
+            AuthenticateDto authenticateDto,
             CancellationToken cancellationToken = default
         );
     }

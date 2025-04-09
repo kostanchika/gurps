@@ -34,7 +34,7 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task ExecuteAsync(
-            RegisterDto registerDto, 
+            RegisterDto registerDto,
             CancellationToken cancellationToken = default
         )
         {

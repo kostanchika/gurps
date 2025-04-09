@@ -33,7 +33,7 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task<AuthResultDto> ExecuteAsync(
-            AuthenticateDto authenticateDto, CancellationToken 
+            AuthenticateDto authenticateDto, CancellationToken
             cancellationToken = default
         )
         {

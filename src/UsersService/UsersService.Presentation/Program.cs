@@ -19,6 +19,9 @@ using UsersService.Application.Validators.Auth;
 using UsersService.Presentation.Middlewares;
 using UsersService.Infrastructure.Services;
 using UsersService.Infrastructure.Services.Configurations;
+using UsersService.Application.Interfaces.UseCases.Friend;
+using UsersService.Application.UseCases.Friend;
+using UsersService.Application.Mappers.Shared;
 
 namespace UsersService.Presentation
 {
@@ -62,13 +65,23 @@ namespace UsersService.Presentation
             builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining(typeof(RegisterValidator));
 
+            // Mapper
+            builder.Services.AddAutoMapper(typeof(UserEntityToUserDto).Assembly);
+
             // UseCases
+            // Auth
             builder.Services.AddScoped<IAuthenticateUseCase, AuthenticateUseCase>();
             builder.Services.AddScoped<IConfirmEmailUseCase, ConfirmEmailUseCase>();
             builder.Services.AddScoped<IForgotPasswordUseCase, ForgotPasswordUseCase>();
             builder.Services.AddScoped<IRefreshAccessTokenUseCase, RefreshAccessTokenUseCase>();
             builder.Services.AddScoped<IRegisterUseCase, RegisterUseCase>();
             builder.Services.AddScoped<IResetPasswordUseCase, ResetPasswordUseCase>();
+            // Friend
+            builder.Services.AddScoped<IGetActiveFriendsUseCase, GetActiveFriendsUseCase>();
+            builder.Services.AddScoped<IGetRecievedFriendRequestsUseCase, GetRecievedFriendRequestsUseCase>();
+            builder.Services.AddScoped<IGetSentFriendRequestsUseCase, GetSentFriendRequestsUseCase>();
+            builder.Services.AddScoped<IRespondFriendRequestUseCase,  RespondFriendRequestUseCase>();
+            builder.Services.AddScoped<ISendFriendRequestUseCase, SendFriendRequestUseCase>();
 
             // Services
             builder.Services.AddScoped<ITokenService, JWTTokenService>();

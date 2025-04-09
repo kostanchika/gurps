@@ -30,7 +30,7 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task ExecuteAsync(
-            ForgotPasswordDto forgotPasswordDto, 
+            ForgotPasswordDto forgotPasswordDto,
             CancellationToken cancellationToken = default
         )
         {

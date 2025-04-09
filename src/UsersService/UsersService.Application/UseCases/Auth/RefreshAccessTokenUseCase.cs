@@ -30,8 +30,8 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task<AuthResultDto> ExecuteAsync(
-            string login, 
-            RefreshAccessTokenDto refreshAccessTokenDto, 
+            string login,
+            RefreshAccessTokenDto refreshAccessTokenDto,
             CancellationToken cancellationToken = default
         )
         {

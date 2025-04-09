@@ -30,7 +30,7 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task ExecuteAsync(
-            ConfirmEmailDto confirmEmailDto, 
+            ConfirmEmailDto confirmEmailDto,
             CancellationToken cancellationToken = default
         )
         {

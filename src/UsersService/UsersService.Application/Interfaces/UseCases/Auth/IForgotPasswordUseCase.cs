@@ -5,7 +5,7 @@ namespace UsersService.Application.Interfaces.UseCases.Auth
     public interface IForgotPasswordUseCase
     {
         public Task ExecuteAsync(
-            ForgotPasswordDto forgotPasswordDto, 
+            ForgotPasswordDto forgotPasswordDto,
             CancellationToken cancellationToken = default
         );
     }

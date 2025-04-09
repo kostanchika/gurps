@@ -30,7 +30,7 @@ namespace UsersService.Application.UseCases.Auth
         }
 
         public async Task ExecuteAsync(
-            ResetPasswordDto resetPasswordDto, 
+            ResetPasswordDto resetPasswordDto,
             CancellationToken cancellationToken
         )
         {
