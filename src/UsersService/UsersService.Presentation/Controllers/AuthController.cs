@@ -35,7 +35,7 @@ namespace UsersService.Presentation.Controllers
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(
-            RegisterDto registerDto, 
+            RegisterDto registerDto,
             CancellationToken cancellationToken
         )
         {
@@ -46,7 +46,7 @@ namespace UsersService.Presentation.Controllers
 
         [HttpPost("login")]
         public async Task<AuthResultDto> Authenticate(
-            AuthenticateDto authenticateDto, 
+            AuthenticateDto authenticateDto,
             CancellationToken cancellationToken
         )
         {
@@ -57,7 +57,7 @@ namespace UsersService.Presentation.Controllers
 
         [HttpPost("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(
-            ConfirmEmailDto confirmEmailDto, 
+            ConfirmEmailDto confirmEmailDto,
             CancellationToken cancellationToken
         )
         {
@@ -70,13 +70,13 @@ namespace UsersService.Presentation.Controllers
         [HttpPost("refresh")]
         [Authorize]
         public async Task<AuthResultDto> RefreshTokens(
-            RefreshAccessTokenDto refreshAccessTokenDto, 
+            RefreshAccessTokenDto refreshAccessTokenDto,
             CancellationToken cancellationToken
         )
         {
             var result = await _refreshAccessTokenUseCase.ExecuteAsync(
-                User.Identity!.Name!, 
-                refreshAccessTokenDto, 
+                User.Identity!.Name!,
+                refreshAccessTokenDto,
                 cancellationToken
             );
 

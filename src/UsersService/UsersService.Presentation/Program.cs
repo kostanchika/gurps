@@ -1,37 +1,37 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using GURPS.Character.Entities;
+using GURPS.Character.Providers.Configuration;
+using GURPS.Character.Providers.Implementations;
+using GURPS.Character.Providers.Implementations.Providers.JSON;
+using GURPS.Character.Providers.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 using UsersService.Application.Interfaces.Services;
+using UsersService.Application.Interfaces.UseCases.Auth;
+using UsersService.Application.Interfaces.UseCases.Character;
+using UsersService.Application.Interfaces.UseCases.Friend;
+using UsersService.Application.Mappers.Shared;
+using UsersService.Application.UseCases.Auth;
+using UsersService.Application.UseCases.Character;
+using UsersService.Application.UseCases.Friend;
+using UsersService.Application.Validators.Auth;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
+using UsersService.Infrastructure.Persistence.NoSQL;
+using UsersService.Infrastructure.Persistence.NoSQL.Configurations;
 using UsersService.Infrastructure.Persistence.Redis;
 using UsersService.Infrastructure.Persistence.Redis.Configurations;
 using UsersService.Infrastructure.Persistence.SQL;
-using UsersService.Application.Interfaces.UseCases.Auth;
-using UsersService.Application.UseCases.Auth;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using UsersService.Application.Validators.Auth;
-using UsersService.Presentation.Middlewares;
 using UsersService.Infrastructure.Services;
 using UsersService.Infrastructure.Services.Configurations;
-using UsersService.Application.Interfaces.UseCases.Friend;
-using UsersService.Application.UseCases.Friend;
-using UsersService.Application.Mappers.Shared;
-using MongoDB.Driver;
-using UsersService.Infrastructure.Persistence.NoSQL;
-using UsersService.Infrastructure.Persistence.NoSQL.Configurations;
-using UsersService.Application.Interfaces.UseCases.Character;
-using UsersService.Application.UseCases.Character;
-using GURPS.Character.Entities;
-using GURPS.Character.Providers.Interfaces;
-using GURPS.Character.Providers.Implementations;
-using GURPS.Character.Providers.Implementations.Providers.JSON;
-using GURPS.Character.Providers.Configuration;
+using UsersService.Presentation.Middlewares;
 
 namespace UsersService.Presentation
 {
@@ -101,7 +101,7 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IGetActiveFriendsUseCase, GetActiveFriendsUseCase>();
             builder.Services.AddScoped<IGetRecievedFriendRequestsUseCase, GetRecievedFriendRequestsUseCase>();
             builder.Services.AddScoped<IGetSentFriendRequestsUseCase, GetSentFriendRequestsUseCase>();
-            builder.Services.AddScoped<IRespondFriendRequestUseCase,  RespondFriendRequestUseCase>();
+            builder.Services.AddScoped<IRespondFriendRequestUseCase, RespondFriendRequestUseCase>();
             builder.Services.AddScoped<ISendFriendRequestUseCase, SendFriendRequestUseCase>();
             // Character
             builder.Services.AddScoped<ISearchCharactersUseCase, SearchCharactersUseCase>();
