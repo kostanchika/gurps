@@ -79,6 +79,7 @@ namespace UsersService.Presentation
                 });
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
             builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("Mongo"));
+            builder.Services.Configure<ImageSettings>(builder.Configuration.GetSection("Images"));
             builder.Services.Configure<CharacterSettings>(builder.Configuration.GetSection("Character"));
 
             // Validation
@@ -115,6 +116,7 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IEmailService, FluentEmailService>();
             builder.Services.AddScoped<IPasswordService, BCryptPasswordService>();
             builder.Services.AddScoped<IKeyValueManager, RedisKeyValueManager>();
+            builder.Services.AddScoped<IImageService, PNGImageService>();
             builder.Services.AddScoped<ICharacterManager, CharacterManager>();
             builder.Services.AddScoped<ICharacterCalculator, CharacterCalculator>();
             builder.Services.AddSingleton<ICharacterConfigurationProvider, JSONCharacterConfigurationProvider>(
@@ -171,6 +173,8 @@ namespace UsersService.Presentation
                 ?? throw new Exception("Redis section is missing or bad configured");
             var mongoSettings = builder.Configuration.GetSection("Mongo").Get<MongoSettings>()
                 ?? throw new Exception("Mongo section is missing or bad configured");
+            var imageSettings = builder.Configuration.GetSection("Images").Get<ImageSettings>()
+                ?? throw new Exception("Images section is missing or bad configured");
 
             var app = builder.Build();
 
@@ -178,6 +182,8 @@ namespace UsersService.Presentation
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseStaticFiles();
 
             app.MapControllers();
 
