@@ -24,6 +24,10 @@ using UsersService.Application.UseCases.Friend;
 using UsersService.Application.Mappers.Shared;
 using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.UseCases.Character;
+using GURPS.Character.Providers.Interfaces;
+using GURPS.Character.Providers.Implementations;
+using GURPS.Character.Providers.Implementations.Providers.JSON;
+using GURPS.Character.Providers.Configuration;
 
 namespace UsersService.Presentation
 {
@@ -62,6 +66,7 @@ namespace UsersService.Presentation
                     settings.ResetPasswordCodeExpiry = TimeSpan.FromMinutes(settings.ResetPasswordCodeLifetimeMinutes);
                 });
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+            builder.Services.Configure<CharacterSettings>(builder.Configuration.GetSection("Character"));
 
             // Validation
             builder.Services.AddFluentValidationAutoValidation();
@@ -97,6 +102,17 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IEmailService, FluentEmailService>();
             builder.Services.AddScoped<IPasswordService, BCryptPasswordService>();
             builder.Services.AddScoped<IKeyValueManager, RedisKeyValueManager>();
+            builder.Services.AddScoped<ICharacterManager, CharacterManager>();
+            builder.Services.AddScoped<ICharacterCalculator, CharacterCalculator>();
+            builder.Services.AddSingleton<ICharacterConfigurationProvider, JSONCharacterConfigurationProvider>(
+                (serviceProvider) =>
+                {
+                    var characterSettings = builder.Configuration.GetSection("Character").Get<CharacterSettings>()
+                        ?? throw new Exception("Character section is missing or bad configured");
+
+                    return new JSONCharacterConfigurationProvider(characterSettings.SettingsPath);
+                }
+            );
 
             // Email
             var emailSettings = builder.Configuration.GetSection("Email").Get<EmailSettings>()

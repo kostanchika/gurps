@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\GURPS.Character.Providers\GURPS.Character.Providers.csproj" />
     <ProjectReference Include="..\UsersService.Application\UsersService.Application.csproj" />
   </ItemGroup>
 

@@ -49,6 +49,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{055A39
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GURPS.Character", "src\Shared\GURPS.Character\GURPS.Character.csproj", "{E9529A31-B3B6-411E-B142-F61D6AF86A1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GURPS.Character.Providers", "src\Shared\GURPS.Character.Providers\GURPS.Character.Providers.csproj", "{E8319394-25B4-4428-B26C-689FE14E5864}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{E9529A31-B3B6-411E-B142-F61D6AF86A1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9529A31-B3B6-411E-B142-F61D6AF86A1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9529A31-B3B6-411E-B142-F61D6AF86A1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8319394-25B4-4428-B26C-689FE14E5864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8319394-25B4-4428-B26C-689FE14E5864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8319394-25B4-4428-B26C-689FE14E5864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8319394-25B4-4428-B26C-689FE14E5864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
