@@ -22,8 +22,12 @@ using UsersService.Infrastructure.Services.Configurations;
 using UsersService.Application.Interfaces.UseCases.Friend;
 using UsersService.Application.UseCases.Friend;
 using UsersService.Application.Mappers.Shared;
+using MongoDB.Driver;
+using UsersService.Infrastructure.Persistence.NoSQL;
+using UsersService.Infrastructure.Persistence.NoSQL.Configurations;
 using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.UseCases.Character;
+using GURPS.Character.Entities;
 using GURPS.Character.Providers.Interfaces;
 using GURPS.Character.Providers.Implementations;
 using GURPS.Character.Providers.Implementations.Providers.JSON;
@@ -51,10 +55,18 @@ namespace UsersService.Presentation
                         ?? throw new Exception("Missing Redis connection string")
                 )
             );
+            builder.Services.AddSingleton<IMongoClient>(_ =>
+            {
+                return new MongoClient(
+                    builder.Configuration.GetConnectionString("MongoConnection")
+                        ?? throw new Exception("Missing Mongo connection string")
+                );
+            });
 
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
             builder.Services.AddScoped<IRepository<FriendshipEntity>, Repository<FriendshipEntity>>();
+            builder.Services.AddScoped<IRepository<CharacterEntity>, CharacterRepository>();
 
             // Settings
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
@@ -66,6 +78,7 @@ namespace UsersService.Presentation
                     settings.ResetPasswordCodeExpiry = TimeSpan.FromMinutes(settings.ResetPasswordCodeLifetimeMinutes);
                 });
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+            builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("Mongo"));
             builder.Services.Configure<CharacterSettings>(builder.Configuration.GetSection("Character"));
 
             // Validation
@@ -156,6 +169,8 @@ namespace UsersService.Presentation
 
             var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>()
                 ?? throw new Exception("Redis section is missing or bad configured");
+            var mongoSettings = builder.Configuration.GetSection("Mongo").Get<MongoSettings>()
+                ?? throw new Exception("Mongo section is missing or bad configured");
 
             var app = builder.Build();
 
