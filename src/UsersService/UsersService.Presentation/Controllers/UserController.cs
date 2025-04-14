@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using UsersService.Application.DTOs.Character;
 using UsersService.Application.DTOs.Friend;
 using UsersService.Application.DTOs.Shared;
+using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.Interfaces.UseCases.Friend;
 
 namespace UsersService.Presentation.Controllers
@@ -16,13 +18,15 @@ namespace UsersService.Presentation.Controllers
         private readonly IGetSentFriendRequestsUseCase _getSentFriendRequestsUseCase;
         private readonly IRespondFriendRequestUseCase _respondFriendRequestUseCase;
         private readonly ISendFriendRequestUseCase _sendFriendRequestUseCase;
+        private readonly ISearchCharactersUseCase _searchCharactersUseCase;
 
         public UserController(
             IGetActiveFriendsUseCase getActiveFriendsUseCase,
             IGetRecievedFriendRequestsUseCase getRecievedFriendRequestsUseCase,
             IGetSentFriendRequestsUseCase getSentFriendRequestsUseCase,
             IRespondFriendRequestUseCase respondFriendRequestUseCase,
-            ISendFriendRequestUseCase sendFriendRequestUseCase
+            ISendFriendRequestUseCase sendFriendRequestUseCase,
+            ISearchCharactersUseCase searchCharactersUseCase
         )
         {
             _getActiveFriendsUseCase = getActiveFriendsUseCase;
@@ -30,6 +34,7 @@ namespace UsersService.Presentation.Controllers
             _getSentFriendRequestsUseCase = getSentFriendRequestsUseCase;
             _respondFriendRequestUseCase = respondFriendRequestUseCase;
             _sendFriendRequestUseCase = sendFriendRequestUseCase;
+            _searchCharactersUseCase = searchCharactersUseCase;
         }
 
         [HttpGet("{login}/friend")]
@@ -120,6 +125,20 @@ namespace UsersService.Presentation.Controllers
             );
 
             return Ok();
+        }
+
+        [HttpGet("{login}/character")]
+        public async Task<CharactersSearchResultDto> GetUserCharacters(
+            [FromQuery] CharacterFiltersDto characterFiltersDto,
+            CancellationToken cancellationToken
+        )
+        {
+            characterFiltersDto = characterFiltersDto with { UserLogin = User.Identity!.Name! };
+
+            return await _searchCharactersUseCase.ExecuteAsync(
+                characterFiltersDto,
+                cancellationToken
+            );
         }
     }
 }
