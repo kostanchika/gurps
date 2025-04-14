@@ -22,6 +22,8 @@ using UsersService.Infrastructure.Services.Configurations;
 using UsersService.Application.Interfaces.UseCases.Friend;
 using UsersService.Application.UseCases.Friend;
 using UsersService.Application.Mappers.Shared;
+using UsersService.Application.Interfaces.UseCases.Character;
+using UsersService.Application.UseCases.Character;
 
 namespace UsersService.Presentation
 {
@@ -82,6 +84,13 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IGetSentFriendRequestsUseCase, GetSentFriendRequestsUseCase>();
             builder.Services.AddScoped<IRespondFriendRequestUseCase,  RespondFriendRequestUseCase>();
             builder.Services.AddScoped<ISendFriendRequestUseCase, SendFriendRequestUseCase>();
+            // Character
+            builder.Services.AddScoped<ISearchCharactersUseCase, SearchCharactersUseCase>();
+            builder.Services.AddScoped<IGetPointsConfigurationUseCase, GetPointsConfigurationUseCase>();
+            builder.Services.AddScoped<IGetCharacterUseCase, GetCharacterUseCase>();
+            builder.Services.AddScoped<ICreateCharacterUseCase, CreateCharacterUseCase>();
+            builder.Services.AddScoped<IDeleteCharacterUseCase, DeleteCharacterUseCase>();
+            builder.Services.AddScoped<IUpdateCharacterUseCase, UpdateCharacterUseCase>();
 
             // Services
             builder.Services.AddScoped<ITokenService, JWTTokenService>();

@@ -22,6 +22,11 @@ namespace UsersService.Application.Validators
             public static int MaxLength => 20;
         }
 
+        public static class Attribute
+        {
+            public static int MinValue => 1;
+        }
+
         internal static IRuleBuilder<T, string> MinLengthWithMessage<T>(
             this IRuleBuilder<T, string> ruleBuilder,
             int minLength,
@@ -35,11 +40,31 @@ namespace UsersService.Application.Validators
         internal static IRuleBuilder<T, string> MaxLengthWithMessage<T>(
             this IRuleBuilder<T, string> ruleBuilder,
             int maxLength,
-            string message
+            string fieldName
         )
         {
             return ruleBuilder.MaximumLength(maxLength)
-                                     .WithMessage(message);
+                                     .WithMessage($"{fieldName} must be shorter or equal to {maxLength}");
+        }
+
+        internal static IRuleBuilder<T, int> MinValueWithMessage<T>(
+            this IRuleBuilder<T, int> ruleBuilder,
+            int minValue,
+            string fieldName
+        )
+        {
+            return ruleBuilder.GreaterThanOrEqualTo(minValue)
+                                        .WithMessage($"{fieldName} must be more or equal to {minValue}");
+        }
+
+        internal static IRuleBuilder<T, float> MinValueWithMessage<T>(
+            this IRuleBuilder<T, float> ruleBuilder,
+            int minValue,
+            string fieldName
+        )
+        {
+            return ruleBuilder.GreaterThanOrEqualTo(minValue)
+                                        .WithMessage($"{fieldName} must be more or equal to {minValue}");
         }
     }
 }
