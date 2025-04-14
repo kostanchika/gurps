@@ -24,7 +24,22 @@ namespace UsersService.Infrastructure.Persistence.SQL
 
         public async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().FindAsync(id, cancellationToken);
+            return await _context.Set<T>().FindAsync([id], cancellationToken: cancellationToken);
+        }
+
+        public async Task<int> GetCountBySpecificationAsync(
+            ISpecification<T> specification,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var query = _context.Set<T>().AsQueryable();
+
+            if (specification.Criteria != null)
+            {
+                query = query.Where(specification.Criteria);
+            }
+
+            return await query.CountAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<T>> GetBySpecificationAsync(
@@ -42,6 +57,12 @@ namespace UsersService.Infrastructure.Persistence.SQL
             if (specification.Includes != null)
             {
                 query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
+            }
+
+            if (specification.Page != null && specification.PageSize != null)
+            {
+                query = query.Skip((specification.Page.Value - 1) * specification.PageSize.Value)
+                             .Take(specification.PageSize.Value);
             }
 
             return await query.ToListAsync(cancellationToken);

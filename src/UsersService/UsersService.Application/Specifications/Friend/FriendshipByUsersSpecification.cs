@@ -24,5 +24,8 @@ namespace UsersService.Application.Specifications.Friend
 
         public List<Expression<Func<FriendshipEntity, object>>>? Includes
             => null;
+
+        public int? Page { get; set; }
+        public int? PageSize { get; set; }
     }
 }

@@ -18,5 +18,8 @@ namespace UsersService.Application.Specifications.Friend
             => [
                 friendship => friendship.Initiator
             ];
+
+        public int? Page { get; set; }
+        public int? PageSize { get; set; }
     }
 }

@@ -11,5 +11,8 @@ namespace UsersService.Application.Specifications.Auth
 
         public List<Expression<Func<UserEntity, object>>>? Includes
             => null;
+
+        public int? Page { get; set; }
+        public int? PageSize { get; set; }
     }
 }

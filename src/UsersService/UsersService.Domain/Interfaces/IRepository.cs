@@ -4,6 +4,7 @@
     {
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<int> GetCountBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellationToken = default);
         Task<IEnumerable<T>> GetBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellationToken = default);
         Task<T?> GetOneBySpecificationAsync(ISpecification<T> specification, CancellationToken cancellationToken = default);
         Task AddAsync(T entity, CancellationToken cancellationToken = default);
