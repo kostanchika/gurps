@@ -16,6 +16,7 @@ namespace UsersService.Application.UseCases.Auth
         private readonly IPasswordService _passwordService;
         private readonly IKeyValueManager _keyValueManager;
         private readonly IEmailService _emailService;
+        private readonly IImageService _imageService;
         private readonly ILogger<IRegisterUseCase> _logger;
 
         public RegisterUseCase(
@@ -23,6 +24,7 @@ namespace UsersService.Application.UseCases.Auth
             IPasswordService passwordService,
             IKeyValueManager keyValueManager,
             IEmailService emailService,
+            IImageService imageService,
             ILogger<IRegisterUseCase> logger
         )
         {
@@ -30,6 +32,7 @@ namespace UsersService.Application.UseCases.Auth
             _passwordService = passwordService;
             _keyValueManager = keyValueManager;
             _emailService = emailService;
+            _imageService = imageService;
             _logger = logger;
         }
 
@@ -76,6 +79,10 @@ namespace UsersService.Application.UseCases.Auth
                 Role = Roles.Player,
                 CreatedAt = DateTime.UtcNow,
             };
+            user.AvatarPath = await _imageService.SaveImageAsync(
+                registerDto.Base64Avatar,
+                cancellationToken
+            );
 
             await _userRepository.AddAsync(user, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);

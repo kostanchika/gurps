@@ -4,6 +4,7 @@
         string Login,
         string Username,
         string Email,
-        string Password
+        string Password,
+        string Base64Avatar
     );
 }
