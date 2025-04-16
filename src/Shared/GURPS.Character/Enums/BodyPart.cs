@@ -2,14 +2,14 @@
 {
     public enum BodyPart
     {
-        Head,
-        Face,
-        Eyes,
-        Neck,
-        Body,
-        Groin,
-        Arms,
-        Legs,
-        Feet
+        Head = 0,
+        Face = 1,
+        Eyes = 2,
+        Neck = 3,
+        Body = 4,
+        Groin = 5,
+        Arms = 6,
+        Legs = 7,
+        Feet = 8
     }
 }

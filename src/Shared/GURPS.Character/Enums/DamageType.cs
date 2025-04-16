@@ -2,10 +2,10 @@
 {
     public enum DamageType
     {
-        Crushing,
-        Cutting,
-        Impaling,
-        Piercing,
-        PiercingPlus
+        Crushing = 0,
+        Cutting = 1,
+        Impaling = 2,
+        Piercing = 3,
+        PiercingPlus = 4
     }
 }

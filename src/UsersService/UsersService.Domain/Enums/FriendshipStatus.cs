@@ -2,8 +2,8 @@
 {
     public enum FriendshipStatus
     {
-        Pending,
-        Accepted,
-        Declined
+        Pending = 0,
+        Accepted = 1,
+        Declined = 2
     }
 }
