@@ -55,7 +55,7 @@ namespace UsersService.Application.UseCases.Friend
                 cancellationToken
             ) ?? throw new FriendshipNotFoundException(initiator.Login, recipent.Login);
 
-            if (existingFriendship.InitiatorId != initiator.Id)
+            if (existingFriendship.InitiatorId != initiator.Id && existingFriendship.Status == Domain.Enums.FriendshipStatus.Pending)
             {
                 throw new ForbiddenFriendshipRespondException(recipentLogin, initiatorLogin);
             }
