@@ -59,12 +59,12 @@ namespace UsersService.Application.UseCases.Auth
                 throw new UserAlreadyExistsException("Login", registerDto.Login);
             }
 
-            if (
-                await _userRepository.GetOneBySpecificationAsync(
+            var existingUser = await _userRepository.GetOneBySpecificationAsync(
                     new UserByEmailSpecification(registerDto.Email),
                     cancellationToken
-                ) != null
-            )
+                );
+
+            if (existingUser != null)
             {
                 throw new UserAlreadyExistsException("Email", registerDto.Email);
             }

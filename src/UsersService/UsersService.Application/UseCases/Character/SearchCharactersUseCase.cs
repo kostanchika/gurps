@@ -53,11 +53,14 @@ namespace UsersService.Application.UseCases.Character
                 new CharacterByFiltersSpecification(characterFiltersDto),
                 cancellationToken
             );
+
+            var charactersCount = await _characterRepository.GetCountBySpecificationAsync(
+                new CharacterByFiltersSpecification(characterFiltersDto),
+                cancellationToken
+            );
+
             var totalPages = (int)Math.Ceiling(
-                (double)await _characterRepository.GetCountBySpecificationAsync(
-                    new CharacterByFiltersSpecification(characterFiltersDto),
-                    cancellationToken
-                ) / characterFiltersDto.PageSize
+                (double)charactersCount / characterFiltersDto.PageSize
             );
 
             _logger.LogInformation("Succesfully found characters");
