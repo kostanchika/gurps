@@ -41,7 +41,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationService.Infras
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationService.Presentation", "src\CommunicationService\CommunicationService.Presentation\CommunicationService.Presentation.csproj", "{F54E415A-7A56-4464-8473-502BC01558C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationService.Tests", "CommunicationService.Tests\CommunicationService.Tests.csproj", "{61A7BBA9-B949-4A2D-873C-41440BFB4E94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationService.Tests", "tests\CommunicationService.Tests\CommunicationService.Tests.csproj", "{61A7BBA9-B949-4A2D-873C-41440BFB4E94}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{3C32AC18-D69A-4293-8931-AEDB76C7916A}"
 EndProject
