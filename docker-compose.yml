@@ -6,8 +6,46 @@ services:
     build:
       context: .
       dockerfile: src/UsersService/UsersService.Presentation/Dockerfile
+    depends_on:
+      - usersservicepg
+      - usersserviceredis   
     ports:
       - 8080:8080
+
+  usersservicepg:
+    image: postgres:latest
+    container_name: "UsersServicePostgres"
+    environment:
+      POSTGRES_USER: users_user
+      POSTGRES_PASSWORD: users_password
+      POSTGRES_DB: usersdb
+    volumes:
+      - users_pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  usersserviceredis:
+    image: redis:latest
+    container_name: "UsersServiceRedis"
+    environment:
+      REDIS_PASSWORD: users_redis
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - users_redis_data:/data
+    ports:
+      - 6379:6379
+
+  usersservicemongo:
+    image: mongo:latest
+    container_name: "UsersServiceMongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_user
+      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+      MONGO_INITDB_DATABASE: mongousersdb
+    volumes:
+      - users_mongo_data:/data/db
+    ports:
+      - 27017:27017
 
   gameservice:
     image: ${DOCKER_REGISTRY-}gurps/game-service
@@ -26,3 +64,8 @@ services:
       dockerfile: src/CommunicationService/CommunicationService.Presentation/Dockerfile
     ports:
       - 8082:8080
+
+volumes:
+  users_pg_data:
+  users_redis_data:
+  users_mongo_data:
