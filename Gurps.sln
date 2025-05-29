@@ -51,6 +51,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GURPS.Character", "src\Shar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GURPS.Character.Providers", "src\Shared\GURPS.Character.Providers\GURPS.Character.Providers.csproj", "{E8319394-25B4-4428-B26C-689FE14E5864}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gRPC", "gRPC", "{E3A059AE-9BE0-4380-9922-AA39DE4722B5}"
+	ProjectSection(SolutionItems) = preProject
+		src\gRPC\Auth.proto = src\gRPC\Auth.proto
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,5 +160,6 @@ Global
 		{055A3931-8706-40DF-91CE-CFA6D75FA29F} = {A724E278-1AFA-49E7-98F5-59A4535A436A}
 		{E9529A31-B3B6-411E-B142-F61D6AF86A1C} = {055A3931-8706-40DF-91CE-CFA6D75FA29F}
 		{E8319394-25B4-4428-B26C-689FE14E5864} = {055A3931-8706-40DF-91CE-CFA6D75FA29F}
+		{E3A059AE-9BE0-4380-9922-AA39DE4722B5} = {A724E278-1AFA-49E7-98F5-59A4535A436A}
 	EndGlobalSection
 EndGlobal

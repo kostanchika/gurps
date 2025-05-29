@@ -1,3 +1,4 @@
+using CommunicationService.Presentation.Middlewares;
 namespace CommunicationService.Presentation
 {
     public class Program
@@ -6,14 +7,24 @@ namespace CommunicationService.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.ConfigureGrpc(builder.Configuration);
 
             builder.Services.AddControllers();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = null;
+                options.DefaultChallengeScheme = null;
+            });
+
+            builder.Services.AddScoped<AuthMiddleware>();
+            builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
 
+            app.UseMiddleware<AuthMiddleware>();
             app.UseAuthorization();
 
 

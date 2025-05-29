@@ -66,6 +66,7 @@ namespace UsersService.Application.UseCases.Auth
                 accessToken,
                 refreshToken,
                 user.Id,
+                user.Login,
                 user.Username,
                 user.Role
             );
