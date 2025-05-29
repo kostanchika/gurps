@@ -1,8 +1,9 @@
-﻿using CommunicationService.Domain.Enums;
+﻿using CommunicationService.Domain.Entities;
+using CommunicationService.Domain.Enums;
 
-namespace CommunicationService.Domain.Entities
+namespace CommunicationService.Application.Dto.Message
 {
-    public class MessageEntity
+    public class MessageDto
     {
         public string Id { get; set; } = null!;
         public string SenderLogin { get; set; } = null!;

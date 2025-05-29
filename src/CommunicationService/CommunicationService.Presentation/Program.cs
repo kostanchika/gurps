@@ -1,4 +1,6 @@
 using CommunicationService.Presentation.Middlewares;
+using UsersService.Presentation.Middlewares;
+
 namespace CommunicationService.Presentation
 {
     public class Program
@@ -7,6 +9,9 @@ namespace CommunicationService.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddMediatR();
+            builder.Services.AddMapping();
+            builder.Services.AddValidation();
             builder.Services.ConfigureGrpc(builder.Configuration);
 
             builder.Services.AddControllers();
@@ -25,6 +30,7 @@ namespace CommunicationService.Presentation
             // Configure the HTTP request pipeline.
 
             app.UseMiddleware<AuthMiddleware>();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

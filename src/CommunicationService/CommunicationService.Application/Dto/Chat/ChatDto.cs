@@ -1,6 +1,6 @@
-﻿namespace CommunicationService.Domain.Entities
+﻿namespace CommunicationService.Application.Dto.Chat
 {
-    public class ChatEntity
+    public class ChatDto
     {
         public string Id { get; set; } = null!;
         public string Name { get; set; } = null!;
