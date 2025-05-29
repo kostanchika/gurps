@@ -14,6 +14,7 @@ namespace CommunicationService.Presentation
             builder.Services.AddMediatR();
             builder.Services.AddMapping();
             builder.Services.AddValidation();
+            builder.Services.AddLocalAttachments(builder.Configuration);
             builder.Services.ConfigureGrpc(builder.Configuration);
             builder.Services.ConfigureSignalR();
 
@@ -30,7 +31,14 @@ namespace CommunicationService.Presentation
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.UseCors(options =>
+            {
+                options.WithOrigins(app.Configuration.GetSection("AllowedOrigins").Get<string[]>() ?? []);
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.AllowCredentials();
+                options.WithExposedHeaders("X-Total-Count");
+            });
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -40,6 +48,10 @@ namespace CommunicationService.Presentation
 
             app.UseWebSockets();
 
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true
+            });
 
             app.MapHub<ChatHub>("/chatHub");
 
