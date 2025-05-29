@@ -8,7 +8,9 @@ services:
       dockerfile: src/UsersService/UsersService.Presentation/Dockerfile
     depends_on:
       - usersservicepg
-      - usersserviceredis   
+      - usersserviceredis
+    volumes:
+      - usersservice_local_data:/app/wwwroot
     ports:
       - 8080:8080
       - 8090:8090
@@ -63,6 +65,8 @@ services:
     build:
       context: .
       dockerfile: src/CommunicationService/CommunicationService.Presentation/Dockerfile
+    volumes:
+      - communication_local_data:/app/wwwroot
     ports:
       - 8082:8080
 
@@ -70,3 +74,5 @@ volumes:
   users_pg_data:
   users_redis_data:
   users_mongo_data:
+  usersservice_local_data:
+  communication_local_data:

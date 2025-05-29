@@ -1,4 +1,8 @@
+﻿using CommunicationService.Application.Features.Chat.Commands.SendMessage;
+using CommunicationService.Application.Interfaces.Services;
+using CommunicationService.Infrastracture.Implementations.Services;
 using CommunicationService.Infrastracture.Implementations.Services.Configurations;
+using CommunicationService.Application.Features.Chat.Commands.CreateChat;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 
@@ -22,6 +26,14 @@ namespace CommunicationService.Presentation
 
             services.AddValidatorsFromAssemblyContaining(typeof(CreateChatValidator));
         }
+
+        public static void AddLocalAttachments(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AttachmentSettings>(configuration.GetSection("Attachment"));
+
+            services.AddScoped<IAttachmentService, LocalAttachmentService>();
+        }
+
         public static void ConfigureGrpc(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<GrpcSettings>(configuration.GetSection("Users"));

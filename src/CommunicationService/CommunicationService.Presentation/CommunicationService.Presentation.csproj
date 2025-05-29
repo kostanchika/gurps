@@ -19,4 +19,8 @@
     <ProjectReference Include="..\CommunicationService.Infrastracture\CommunicationService.Infrastracture.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\attachments\" />
+  </ItemGroup>
+
 </Project>
