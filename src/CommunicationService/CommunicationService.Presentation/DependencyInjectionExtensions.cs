@@ -1,9 +1,11 @@
 ﻿using CommunicationService.Application.Features.Chat.Commands.SendMessage;
 using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
+using CommunicationService.Infrastracture.Implementations.ChatService;
 using CommunicationService.Infrastracture.Implementations.Services;
 using CommunicationService.Infrastracture.Implementations.Services.Configurations;
 using CommunicationService.Infrastracture.Persistense.Mongo;
+using Microsoft.AspNetCore.SignalR;
 using MongoDB.Driver;
 using CommunicationService.Application.Features.Chat.Commands.CreateChat;
 using FluentValidation.AspNetCore;
@@ -58,6 +60,16 @@ namespace CommunicationService.Presentation
         public static void ConfigureGrpc(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<GrpcSettings>(configuration.GetSection("Users"));
+        }
+
+        public static void ConfigureSignalR(this IServiceCollection services)
+        {
+            services.AddSignalR();
+
+            services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            services.AddSingleton<IConnectionMapper, ConnectionMapper>();
+
+            services.AddScoped<IChatService, ChatService>();
         }
     }
 }

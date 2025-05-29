@@ -1,3 +1,4 @@
+using CommunicationService.Infrastracture.Implementations.ChatService;
 using CommunicationService.Presentation.Middlewares;
 using UsersService.Presentation.Middlewares;
 
@@ -14,6 +15,7 @@ namespace CommunicationService.Presentation
             builder.Services.AddMapping();
             builder.Services.AddValidation();
             builder.Services.ConfigureGrpc(builder.Configuration);
+            builder.Services.ConfigureSignalR();
 
             builder.Services.AddControllers();
 
@@ -36,6 +38,10 @@ namespace CommunicationService.Presentation
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseWebSockets();
+
+
+            app.MapHub<ChatHub>("/chatHub");
 
             app.MapControllers();
 
