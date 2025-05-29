@@ -70,9 +70,22 @@ services:
     ports:
       - 8082:8080
 
+  communicationservicemongo:
+    image: mongo:latest
+    container_name: "CommunicationServiceMongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo_communication
+      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+      MONGO_INITDB_DATABASE: mongocommunicationdb
+    volumes:
+      - communication_mongo_data:/data/db
+    ports:
+      - 27019:27017
+
 volumes:
   users_pg_data:
   users_redis_data:
   users_mongo_data:
   usersservice_local_data:
   communication_local_data:
+  communication_mongo_data:  

@@ -1,10 +1,14 @@
 ﻿using CommunicationService.Application.Features.Chat.Commands.SendMessage;
+using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
 using CommunicationService.Infrastracture.Implementations.Services;
 using CommunicationService.Infrastracture.Implementations.Services.Configurations;
+using CommunicationService.Infrastracture.Persistense.Mongo;
+using MongoDB.Driver;
 using CommunicationService.Application.Features.Chat.Commands.CreateChat;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using CommunicationService.Infrastracture.Persistense.Mongo.Configurations;
 
 namespace CommunicationService.Presentation
 {
@@ -25,6 +29,23 @@ namespace CommunicationService.Presentation
             services.AddFluentValidationAutoValidation();
 
             services.AddValidatorsFromAssemblyContaining(typeof(CreateChatValidator));
+        }
+
+        public static void AddPersistense(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSingleton<IMongoClient>(_ =>
+            {
+                return new MongoClient(
+                    configuration.GetConnectionString("MongoConnection")
+                        ?? throw new Exception("Missing Mongo connection string")
+                );
+            });
+
+            services.Configure<MongoSettings>(configuration.GetSection("Mongo"));
+
+            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
         }
 
         public static void AddLocalAttachments(this IServiceCollection services, IConfiguration configuration)

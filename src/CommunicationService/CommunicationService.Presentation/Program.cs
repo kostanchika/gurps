@@ -9,6 +9,7 @@ namespace CommunicationService.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddPersistense(builder.Configuration);
             builder.Services.AddMediatR();
             builder.Services.AddMapping();
             builder.Services.AddValidation();
