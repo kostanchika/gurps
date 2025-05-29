@@ -30,6 +30,8 @@ namespace CommunicationService.Presentation
 
             // Configure the HTTP request pipeline.
 
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
+
             app.UseMiddleware<AuthMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
