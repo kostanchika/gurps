@@ -60,6 +60,8 @@ namespace CommunicationService.Presentation
         public static void ConfigureGrpc(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<GrpcSettings>(configuration.GetSection("Users"));
+
+            services.AddScoped<IFriendsService, GrpcFriendsService>();
         }
 
         public static void ConfigureSignalR(this IServiceCollection services)
