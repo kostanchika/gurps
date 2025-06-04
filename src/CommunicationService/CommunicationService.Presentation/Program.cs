@@ -1,4 +1,5 @@
 using CommunicationService.Infrastracture.Implementations.ChatService;
+using CommunicationService.Infrastracture.Implementations.NotificationService;
 using CommunicationService.Presentation.Middlewares;
 using UsersService.Presentation.Middlewares;
 
@@ -55,7 +56,7 @@ namespace CommunicationService.Presentation
             });
 
             app.MapHub<ChatHub>("/chatHub");
-            app.MapHub<ChatHub>("/notificationHub");
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.MapControllers();
 
