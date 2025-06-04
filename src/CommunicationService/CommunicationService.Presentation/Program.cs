@@ -17,6 +17,7 @@ namespace CommunicationService.Presentation
             builder.Services.AddLocalAttachments(builder.Configuration);
             builder.Services.ConfigureGrpc(builder.Configuration);
             builder.Services.ConfigureSignalR();
+            builder.Services.ConfigureRabbitMQ(builder.Configuration);
 
             builder.Services.AddControllers();
 
@@ -54,6 +55,7 @@ namespace CommunicationService.Presentation
             });
 
             app.MapHub<ChatHub>("/chatHub");
+            app.MapHub<ChatHub>("/notificationHub");
 
             app.MapControllers();
 

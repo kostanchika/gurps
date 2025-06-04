@@ -11,6 +11,7 @@ using CommunicationService.Application.Features.Chat.Commands.CreateChat;
 using FluentValidation.AspNetCore;
 using FluentValidation;
 using CommunicationService.Infrastracture.Persistense.Mongo.Configurations;
+using CommunicationService.Infrastracture.Implementations.NotificationService;
 
 namespace CommunicationService.Presentation
 {
@@ -72,6 +73,14 @@ namespace CommunicationService.Presentation
             services.AddSingleton<IConnectionMapper, ConnectionMapper>();
 
             services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<INotificationService, NotificationService>();
+        }
+
+        public static void ConfigureRabbitMQ(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<NotificationSettings>(configuration.GetSection("RabbitMQ"));
+
+            services.AddHostedService<NotificationBackgroundConsumer>();
         }
     }
 }
