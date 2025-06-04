@@ -10,7 +10,7 @@ services:
       - usersservicepg
       - usersserviceredis
     volumes:
-      - usersservice_local_data:/app/wwwroot
+      - users_local_data:/app/wwwroot
     ports:
       - 8080:8080
       - 8090:8090
@@ -82,10 +82,26 @@ services:
     ports:
       - 27019:27017
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: gurps
+      RABBITMQ_DEFAULT_PASS: gurps_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+
+
 volumes:
   users_pg_data:
   users_redis_data:
   users_mongo_data:
-  usersservice_local_data:
+  users_local_data:
   communication_local_data:
   communication_mongo_data:  
+  rabbitmq_data:  
