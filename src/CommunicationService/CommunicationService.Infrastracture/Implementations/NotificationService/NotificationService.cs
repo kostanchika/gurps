@@ -1,6 +1,5 @@
 ﻿using CommunicationService.Application.Dto.Notification;
 using CommunicationService.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace CommunicationService.Infrastracture.Implementations.NotificationService

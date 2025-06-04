@@ -26,8 +26,8 @@ namespace CommunicationService.Infrastracture.Implementations.NotificationServic
             var settings = options.Value;
             _queue = settings.Queue;
 
-            var factory = new ConnectionFactory 
-            { 
+            var factory = new ConnectionFactory
+            {
                 HostName = settings.Host,
                 UserName = settings.User,
                 Password = settings.Password
