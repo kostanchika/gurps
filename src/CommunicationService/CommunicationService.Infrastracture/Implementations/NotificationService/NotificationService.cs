@@ -17,7 +17,7 @@ namespace CommunicationService.Infrastracture.Implementations.NotificationServic
         public async Task NotifyNotificationSent(NotificationDto notificationDto, CancellationToken cancellationToken = default)
         {
             await _hubContext.Clients.User(notificationDto.UserLogin)
-                .SendAsync("RecieveNotification", notificationDto, cancellationToken: cancellationToken);
+                .SendAsync("ReceiveNotification", notificationDto, cancellationToken: cancellationToken);
         }
     }
 }
