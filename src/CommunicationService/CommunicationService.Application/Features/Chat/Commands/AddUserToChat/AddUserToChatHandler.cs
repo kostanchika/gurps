@@ -97,6 +97,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
 
             var notification = new NotificationEntity
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "Invitation",
                 Content = $"You were invited to chat '{existingChat.Name}'",
                 Meta = [new MetaEntity { Name = "ChatId", Description = existingChat.Id }],

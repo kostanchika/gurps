@@ -86,6 +86,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.KickUserFromCh
 
             var notification = new NotificationEntity
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "Kick",
                 Content = $"You were kicked from chat '{existingChat.Name}'",
                 Meta = [new MetaEntity { Name = "ChatId", Description = existingChat.Id }],
