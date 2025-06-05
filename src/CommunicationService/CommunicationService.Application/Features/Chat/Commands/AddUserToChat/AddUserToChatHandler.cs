@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CommunicationService.Application.Dto.Chat;
 using CommunicationService.Application.Dto.Message;
+using CommunicationService.Application.Dto.Notification;
 using CommunicationService.Application.Exceptions.Chat;
 using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
@@ -14,25 +15,31 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
     public class AddUserToChatHandler : IRequestHandler<AddUserToChatCommand, ChatDto>
     {
         private readonly IChatRepository _chatRepository;
+        private readonly INotificationRepository _notificationRepository;
         private readonly IMessageRepository _messageRepository;
         private readonly IChatService _chatService;
         private readonly IFriendsService _friendsService;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
         private readonly ILogger<AddUserToChatHandler> _logger;
 
         public AddUserToChatHandler(
             IChatRepository chatRepository,
+            INotificationRepository notificationRepository,
             IMessageRepository messageRepository,
             IChatService chatService,
             IFriendsService friendsService,
+            INotificationService notificationService,
             IMapper mapper,
             ILogger<AddUserToChatHandler> logger
         )
         {
             _chatRepository = chatRepository;
+            _notificationRepository = notificationRepository;
             _messageRepository = messageRepository;
             _chatService = chatService;
             _friendsService = friendsService;
+            _notificationService = notificationService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -87,6 +94,24 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
             var messageDto = _mapper.Map<MessageDto>(message);
 
             await _chatService.NotifyMessageSentAsync(messageDto, cancellationToken);
+
+            var notification = new NotificationEntity
+            {
+                Name = "Invitation",
+                Content = $"You were invited to chat '{existingChat.Name}'",
+                Meta = [new MetaEntity { Name = "ChatId", Description = existingChat.Id }],
+                Status = NotificationStatus.Created,
+                CreatedAt = DateTime.UtcNow,
+                ViewedAt = DateTime.MaxValue,
+                UserLogin = command.InviteeLogin
+            };
+
+            var notificationDto = _mapper.Map<NotificationDto>(notification);
+
+            await _notificationRepository.AddAsync(notification, cancellationToken);
+            await _notificationRepository.SaveChangesAsync(cancellationToken);
+
+            await _notificationService.NotifyNotificationSent(notificationDto, cancellationToken);
 
             var chatDto = _mapper.Map<ChatDto>(existingChat);
             await _chatService.AddUserToChatAsync(command.InviteeLogin, command.ChatId, cancellationToken);

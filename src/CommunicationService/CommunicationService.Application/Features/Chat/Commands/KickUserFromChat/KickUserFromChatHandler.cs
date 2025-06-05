@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CommunicationService.Application.Dto.Message;
+using CommunicationService.Application.Dto.Notification;
 using CommunicationService.Application.Exceptions.Chat;
 using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
@@ -14,21 +15,27 @@ namespace CommunicationService.Application.Features.Chat.Commands.KickUserFromCh
     {
         private readonly IChatRepository _chatRepository;
         private readonly IMessageRepository _messageRepository;
+        private readonly INotificationRepository _notificationRepository;
         private readonly IChatService _chatService;
+        private readonly INotificationService _notificationService;
         private readonly IMapper _mapper;
         private readonly ILogger<KickUserFromChatHandler> _logger;
 
         public KickUserFromChatHandler(
             IChatRepository chatRepository,
             IMessageRepository messageRepository,
+            INotificationRepository notificationRepository,
             IChatService chatService,
+            INotificationService notificationService,
             IMapper mapper,
             ILogger<KickUserFromChatHandler> logger
         )
         {
             _chatRepository = chatRepository;
             _messageRepository = messageRepository;
+            _notificationRepository = notificationRepository;
             _chatService = chatService;
+            _notificationService = notificationService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -76,6 +83,24 @@ namespace CommunicationService.Application.Features.Chat.Commands.KickUserFromCh
 
             var messageDto = _mapper.Map<MessageDto>(leavingMessage);
             await _chatService.NotifyMessageSentAsync(messageDto, cancellationToken);
+
+            var notification = new NotificationEntity
+            {
+                Name = "Kick",
+                Content = $"You were kicked from chat '{existingChat.Name}'",
+                Meta = [new MetaEntity { Name = "ChatId", Description = existingChat.Id }],
+                Status = NotificationStatus.Created,
+                CreatedAt = DateTime.UtcNow,
+                ViewedAt = DateTime.MaxValue,
+                UserLogin = command.KickeeLogin
+            };
+
+            var notificationDto = _mapper.Map<NotificationDto>(notification);
+
+            await _notificationRepository.AddAsync(notification, cancellationToken);
+            await _notificationRepository.SaveChangesAsync(cancellationToken);
+
+            await _notificationService.NotifyNotificationSent(notificationDto, cancellationToken);
 
             await _chatService.RemoveUserFromChatAsync(command.KickeeLogin, command.ChatId, cancellationToken);
 
