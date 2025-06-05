@@ -66,7 +66,8 @@ namespace CommunicationService.Infrastracture.Persistense.Mongo
             bool onlyNew,
             CancellationToken cancellationToken = default)
         {
-            var filter = Builders<NotificationEntity>.Filter.Eq(n => n.UserLogin, userLogin);
+            var filter = Builders<NotificationEntity>.Filter.Eq(n => n.UserLogin, userLogin) &
+                         Builders<NotificationEntity>.Filter.Ne(n => n.Status, NotificationStatus.Hidden);
 
             if (onlyNew)
             {
