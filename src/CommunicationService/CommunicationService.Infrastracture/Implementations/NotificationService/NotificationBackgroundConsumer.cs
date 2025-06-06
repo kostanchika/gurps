@@ -33,8 +33,8 @@ namespace CommunicationService.Infrastracture.Implementations.NotificationServic
                 Password = settings.Password
             };
 
-            _connection = factory.CreateConnectionAsync().Result;
-            _channel = _connection.CreateChannelAsync().Result;
+            _connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
+            _channel = _connection.CreateChannelAsync().GetAwaiter().GetResult();
             _channel.QueueDeclareAsync(settings.Queue, true, false, false, null).Wait();
         }
 
