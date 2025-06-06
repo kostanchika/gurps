@@ -27,33 +27,33 @@ namespace CommunicationService.Presentation.Controllers
             CancellationToken cancellationToken
         )
         {
-            var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
             return await _mediator.Send(new GetNotificationsQuery(userLogin, onlyNew), cancellationToken);
         }
 
         [HttpPost("{id}/read")]
         [Authorize]
-        public async Task<NotificationDto> ReadNotification(
+        public async Task ReadNotification(
             string id,
             CancellationToken cancellationToken
         )
         {
             var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return await _mediator.Send(new ReadNotificationCommand(userLogin, id), cancellationToken);
+            await _mediator.Send(new ReadNotificationCommand(userLogin, id), cancellationToken);
         }
 
         [HttpPost("{id}/hide")]
         [Authorize]
-        public async Task<NotificationDto> HideNotification(
+        public async Task HideNotification(
             string id,
             CancellationToken cancellationToken
         )
         {
             var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return await _mediator.Send(new HideNotificationCommand(userLogin, id), cancellationToken);
+            await _mediator.Send(new HideNotificationCommand(userLogin, id), cancellationToken);
         }
     }
 }

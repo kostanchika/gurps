@@ -9,5 +9,5 @@ namespace CommunicationService.Application.Features.Chat.Commands.CreateChat
         string Name,
         string[]? Participants,
         IAttachment Logo
-    ) : IRequest<ChatDto>;
+    ) : IRequest<string>;
 }

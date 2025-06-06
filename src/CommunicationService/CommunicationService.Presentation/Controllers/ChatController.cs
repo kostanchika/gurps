@@ -69,7 +69,9 @@ namespace CommunicationService.Presentation.Controllers
                 new AttachmentAdapter(createChatRequest.Logo)
             );
 
-            return await _mediator.Send(createChatCommand, cancellationToken);
+            var chatId = await _mediator.Send(createChatCommand, cancellationToken);
+
+            return await _mediator.Send(new GetChatQuery(userLogin, chatId), cancellationToken);
         }
 
         [HttpGet("{chatId}")]
@@ -115,10 +117,12 @@ namespace CommunicationService.Presentation.Controllers
         {
             var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return await _mediator.Send(
+            var existingChatId = await _mediator.Send(
                 new AddUserToChatCommand(userLogin, chatId, addUserToChatRequest.InviteeLogin),
                 cancellationToken
             );
+
+            return await _mediator.Send(new GetChatQuery(userLogin, existingChatId), cancellationToken);
         }
 
         [HttpPost("{chatId}/leave")]
@@ -145,7 +149,7 @@ namespace CommunicationService.Presentation.Controllers
         }
 
         [HttpPost("{chatId}/messages")]
-        public async Task<MessageDto> SendMessage(
+        public async Task SendMessage(
             string chatId,
             [FromForm] SendMessageRequest sendMessageRequest,
             CancellationToken cancellationToken
@@ -162,11 +166,11 @@ namespace CommunicationService.Presentation.Controllers
                                 : new AttachmentAdapter(sendMessageRequest.Attachment)
             );
 
-            return await _mediator.Send(sendMessageCommand, cancellationToken);
+            await _mediator.Send(sendMessageCommand, cancellationToken);
         }
 
         [HttpDelete("{chatId}/messages/{messageId}")]
-        public async Task<MessageDto> DeleteMessage(
+        public async Task DeleteMessage(
             string chatId,
             string messageId,
             CancellationToken cancellationToken
@@ -174,7 +178,7 @@ namespace CommunicationService.Presentation.Controllers
         {
             var userLogin = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
-            return await _mediator.Send(new DeleteMessageCommand(userLogin, messageId), cancellationToken);
+            await _mediator.Send(new DeleteMessageCommand(userLogin, messageId), cancellationToken);
         }
     }
 }

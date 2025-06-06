@@ -7,5 +7,5 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
         string UserLogin,
         string ChatId,
         string InviteeLogin
-    ) : IRequest<ChatDto>;
+    ) : IRequest<string>;
 }

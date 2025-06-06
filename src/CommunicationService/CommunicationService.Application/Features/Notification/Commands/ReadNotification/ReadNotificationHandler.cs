@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CommunicationService.Application.Dto.Notification;
-using CommunicationService.Application.Exceptions.Notification;
+﻿using CommunicationService.Application.Exceptions.Notification;
 using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Domain.Enums;
 using MediatR;
@@ -8,24 +6,21 @@ using Microsoft.Extensions.Logging;
 
 namespace CommunicationService.Application.Features.Notification.Commands.ReadNotification
 {
-    public class ReadNotificationHandler : IRequestHandler<ReadNotificationCommand, NotificationDto>
+    public class ReadNotificationHandler : IRequestHandler<ReadNotificationCommand>
     {
         private readonly INotificationRepository _notificationRepository;
-        private readonly IMapper _mapper;
         private readonly ILogger<ReadNotificationHandler> _logger;
 
         public ReadNotificationHandler(
             INotificationRepository notificationRepository,
-            IMapper mapper,
             ILogger<ReadNotificationHandler> logger
         )
         {
             _notificationRepository = notificationRepository;
-            _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<NotificationDto> Handle(ReadNotificationCommand command, CancellationToken cancellationToken)
+        public async Task Handle(ReadNotificationCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 "Start marking notification with id = '{notificationId}' as read by user with login = '{UserLogin}'",
@@ -47,8 +42,6 @@ namespace CommunicationService.Application.Features.Notification.Commands.ReadNo
                 throw new WrongNotificationStatusException(command.UserLogin, command.NotificationId, notification.Status);
             }
 
-            var notificationDto = _mapper.Map<NotificationDto>(notification);
-
             await _notificationRepository.ChangeNotificationStatus(notification, NotificationStatus.Viewed, cancellationToken);
 
             _logger.LogInformation(
@@ -56,8 +49,6 @@ namespace CommunicationService.Application.Features.Notification.Commands.ReadNo
                 command.NotificationId,
                 command.UserLogin
             );
-
-            return notificationDto;
         }
     }
 }

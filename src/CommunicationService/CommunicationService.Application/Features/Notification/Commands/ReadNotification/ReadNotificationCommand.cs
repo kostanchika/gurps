@@ -6,5 +6,5 @@ namespace CommunicationService.Application.Features.Notification.Commands.ReadNo
     public record ReadNotificationCommand(
         string UserLogin,
         string NotificationId
-    ) : IRequest<NotificationDto>;
+    ) : IRequest;
 }

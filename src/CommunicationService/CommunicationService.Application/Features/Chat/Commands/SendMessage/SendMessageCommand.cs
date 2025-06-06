@@ -9,5 +9,5 @@ namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
         string ChatId,
         string Message,
         IAttachment? Attachment
-    ) : IRequest<MessageDto>;
+    ) : IRequest;
 }

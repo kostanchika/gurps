@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
 {
-    public class AddUserToChatHandler : IRequestHandler<AddUserToChatCommand, ChatDto>
+    public class AddUserToChatHandler : IRequestHandler<AddUserToChatCommand, string>
     {
         private readonly IChatRepository _chatRepository;
         private readonly INotificationRepository _notificationRepository;
@@ -44,7 +44,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
             _logger = logger;
         }
 
-        public async Task<ChatDto> Handle(AddUserToChatCommand command, CancellationToken cancellationToken)
+        public async Task<string> Handle(AddUserToChatCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 "User with login = '{InviterLogin}' add user with login = '{InviteeLgin}' to chat with id = '{ChatId}'",
@@ -114,7 +114,6 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
 
             await _notificationService.NotifyNotificationSent(notificationDto, cancellationToken);
 
-            var chatDto = _mapper.Map<ChatDto>(existingChat);
             await _chatService.AddUserToChatAsync(command.InviteeLogin, command.ChatId, cancellationToken);
 
             _logger.LogInformation(
@@ -125,7 +124,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
                 command.ChatId
             );
 
-            return chatDto;
+            return existingChat.Id;
         }
     }
 }

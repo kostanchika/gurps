@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CommunicationService.Application.Dto.Chat;
 using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
 using CommunicationService.Domain.Entities;
@@ -8,27 +7,24 @@ using Microsoft.Extensions.Logging;
 
 namespace CommunicationService.Application.Features.Chat.Commands.CreateChat
 {
-    public class CreateChatHandler : IRequestHandler<CreateChatCommand, ChatDto>
+    public class CreateChatHandler : IRequestHandler<CreateChatCommand, string>
     {
         private readonly IChatRepository _chatRepository;
         private readonly IAttachmentService _attachmentService;
-        private readonly IMapper _mapper;
         private readonly ILogger<CreateChatHandler> _logger;
 
         public CreateChatHandler(
             IChatRepository chatRepository,
             IAttachmentService attachmentService,
-            IMapper mapper,
             ILogger<CreateChatHandler> logger
         )
         {
             _chatRepository = chatRepository;
             _attachmentService = attachmentService;
-            _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<ChatDto> Handle(CreateChatCommand command, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateChatCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 "Start creating chat with name = '{Name}' by user with login = '{UserLogin}'",
@@ -50,15 +46,13 @@ namespace CommunicationService.Application.Features.Chat.Commands.CreateChat
             await _chatRepository.AddAsync(chat, cancellationToken);
             await _chatRepository.SaveChangesAsync(cancellationToken);
 
-            var chatDto = _mapper.Map<ChatDto>(chat);
-
             _logger.LogInformation(
                 "Successfuuly created chat with name = '{Name}' by user with login = '{UserLogin}'",
                 command.Name,
                 command.UserLogin
             );
 
-            return chatDto;
+            return chat.Id;
         }
     }
 }

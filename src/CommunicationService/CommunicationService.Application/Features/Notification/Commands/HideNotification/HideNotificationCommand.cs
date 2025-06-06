@@ -6,5 +6,5 @@ namespace CommunicationService.Application.Features.Notification.Commands.HideNo
     public record HideNotificationCommand(
         string UserLogin,
         string NotificationId
-    ) : IRequest<NotificationDto>;
+    ) : IRequest;
 }

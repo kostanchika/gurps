@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
 {
-    public class SendMessageHandler : IRequestHandler<SendMessageCommand, MessageDto>
+    public class SendMessageHandler : IRequestHandler<SendMessageCommand>
     {
         private readonly IChatRepository _chatRepository;
         private readonly IMessageRepository _messageRepository;
@@ -36,7 +36,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
             _logger = logger;
         }
 
-        public async Task<MessageDto> Handle(SendMessageCommand command, CancellationToken cancellationToken)
+        public async Task Handle(SendMessageCommand command, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
                 "Start sending message from user with login = '{UserLogin}' to chat with id = '{ChatId}', " +
@@ -94,8 +94,6 @@ namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
                 command.ChatId,
                 command.Attachment != null
             );
-
-            return messageDto;
         }
     }
 }
