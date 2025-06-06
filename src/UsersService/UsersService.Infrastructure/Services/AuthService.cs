@@ -22,8 +22,10 @@ namespace UsersService.Infrastructure.Services
         public override Task<UserResponse> ValidateToken(TokenRequest request, ServerCallContext context)
         {
             return Task.FromResult(
-                new UserResponse { Login = _tokenService.GetLoginFromToken(request.Token)
-            });
+                new UserResponse
+                {
+                    Login = _tokenService.GetLoginFromToken(request.Token) ?? ""
+                });
         }
 
         public override async Task<FriendsResponse> AreUsersFriend(FriendsRequest request, ServerCallContext context)

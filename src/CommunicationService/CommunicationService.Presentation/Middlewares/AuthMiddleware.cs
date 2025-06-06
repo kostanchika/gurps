@@ -47,7 +47,7 @@ namespace CommunicationService.Presentation.Middlewares
                 }
                 catch
                 {
-                    throw new UnauthorizedException("");
+                    throw new UnauthorizedException("Unauthorized access");
                 }
             }
 
