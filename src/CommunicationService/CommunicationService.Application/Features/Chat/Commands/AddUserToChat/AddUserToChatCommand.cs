@@ -1,5 +1,4 @@
-﻿using CommunicationService.Application.Dto.Chat;
-using MediatR;
+﻿using MediatR;
 
 namespace CommunicationService.Application.Features.Chat.Commands.AddUserToChat
 {

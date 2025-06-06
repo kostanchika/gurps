@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using CommunicationService.Application.Interfaces.Repositories;
+﻿using CommunicationService.Application.Interfaces.Repositories;
 using CommunicationService.Application.Interfaces.Services;
 using CommunicationService.Domain.Entities;
 using MediatR;

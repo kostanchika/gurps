@@ -1,5 +1,4 @@
-﻿using CommunicationService.Application.Dto.Message;
-using CommunicationService.Application.Interfaces;
+﻿using CommunicationService.Application.Interfaces;
 using MediatR;
 
 namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
@@ -8,6 +7,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
         string UserLogin,
         string ChatId,
         string Message,
-        IAttachment? Attachment
+        IAttachment? Attachment,
+        bool IsSystem = false
     ) : IRequest;
 }

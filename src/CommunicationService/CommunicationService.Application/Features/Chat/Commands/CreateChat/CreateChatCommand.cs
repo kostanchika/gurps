@@ -1,5 +1,4 @@
-﻿using CommunicationService.Application.Dto.Chat;
-using CommunicationService.Application.Interfaces;
+﻿using CommunicationService.Application.Interfaces;
 using MediatR;
 
 namespace CommunicationService.Application.Features.Chat.Commands.CreateChat

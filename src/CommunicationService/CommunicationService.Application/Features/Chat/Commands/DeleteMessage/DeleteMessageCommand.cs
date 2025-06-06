@@ -1,5 +1,4 @@
-﻿using CommunicationService.Application.Dto.Message;
-using MediatR;
+﻿using MediatR;
 
 namespace CommunicationService.Application.Features.Chat.Commands.DeleteMessage
 {

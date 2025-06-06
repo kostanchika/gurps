@@ -1,5 +1,4 @@
-﻿using CommunicationService.Application.Dto.Notification;
-using MediatR;
+﻿using MediatR;
 
 namespace CommunicationService.Application.Features.Notification.Commands.ReadNotification
 {

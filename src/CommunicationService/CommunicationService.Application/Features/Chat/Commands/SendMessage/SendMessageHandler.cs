@@ -59,7 +59,7 @@ namespace CommunicationService.Application.Features.Chat.Commands.SendMessage
                 Id = Guid.NewGuid().ToString(),
                 SenderLogin = command.UserLogin,
                 ChatId = command.ChatId,
-                CanDelete = true,
+                CanDelete = !command.IsSystem,
                 Status = MessageStatus.Created,
                 Content = command.Message,
                 CreatedAt = DateTime.UtcNow
