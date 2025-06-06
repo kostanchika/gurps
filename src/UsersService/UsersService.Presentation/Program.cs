@@ -6,6 +6,7 @@ using GURPS.Character.Providers.Implementations;
 using GURPS.Character.Providers.Implementations.Providers.JSON;
 using GURPS.Character.Providers.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
@@ -17,10 +18,12 @@ using UsersService.Application.Interfaces.Services;
 using UsersService.Application.Interfaces.UseCases.Auth;
 using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.Interfaces.UseCases.Friend;
+using UsersService.Application.Interfaces.UseCases.User;
 using UsersService.Application.Mappers.Shared;
 using UsersService.Application.UseCases.Auth;
 using UsersService.Application.UseCases.Character;
 using UsersService.Application.UseCases.Friend;
+using UsersService.Application.UseCases.User;
 using UsersService.Application.Validators.Auth;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
@@ -40,6 +43,19 @@ namespace UsersService.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(8080, listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http1;
+                });
+
+                options.ListenAnyIP(8090, listenOptions =>
+                {
+                    listenOptions.Protocols = HttpProtocols.Http2;
+                });
+            });
 
             builder.Services.AddControllers();
 
@@ -111,6 +127,9 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IDeleteCharacterUseCase, DeleteCharacterUseCase>();
             builder.Services.AddScoped<IUpdateCharacterUseCase, UpdateCharacterUseCase>();
 
+            // User
+            builder.Services.AddScoped<IGetUserInfoUseCase, GetUserInfoUseCase>();
+
             // Services
             builder.Services.AddScoped<ITokenService, JWTTokenService>();
             builder.Services.AddScoped<IEmailService, FluentEmailService>();
@@ -147,6 +166,9 @@ namespace UsersService.Presentation
             // Middlewares
             builder.Services.AddScoped<ExceptionHandlingMiddleware>();
 
+            // gRPC
+            builder.Services.AddGrpc();
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -178,12 +200,22 @@ namespace UsersService.Presentation
 
             var app = builder.Build();
 
+            app.UseCors(options =>
+            {
+                options.AllowAnyOrigin();
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
+                options.WithExposedHeaders("X-Total-Count");
+            });
+
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles();
+
+            app.MapGrpcService<AuthService>();
 
             app.MapControllers();
 

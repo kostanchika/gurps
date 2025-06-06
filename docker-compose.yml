@@ -6,19 +6,30 @@ services:
     build:
       context: .
       dockerfile: src/UsersService/UsersService.Presentation/Dockerfile
+    environment:
+      Email__Host: ${EMAIL__HOST}
+      Email__Port: ${EMAIL__PORT}
+      Email__EnableSSL: ${EMAIL__ENABLE_SSL}
+      Email__Sender: ${EMAIL__SENDER}
+      Email__Name: ${EMAIL__NAME}
+      Email__Login: ${EMAIL__LOGIN}
+      Email__Password: ${EMAIL__PASSWORD}
     depends_on:
       - usersservicepg
-      - usersserviceredis   
+      - usersserviceredis
+    volumes:
+      - users_local_data:/app/wwwroot
     ports:
       - 8080:8080
+      - 8090:8090
 
   usersservicepg:
     image: postgres:latest
     container_name: "UsersServicePostgres"
     environment:
-      POSTGRES_USER: users_user
-      POSTGRES_PASSWORD: users_password
-      POSTGRES_DB: usersdb
+      POSTGRES_USER: ${USERS_DB_USER}
+      POSTGRES_PASSWORD: ${USERS_DB_PASSWORD}
+      POSTGRES_DB: ${USERS_DB_NAME}
     volumes:
       - users_pg_data:/var/lib/postgresql/data
     ports:
@@ -28,7 +39,7 @@ services:
     image: redis:latest
     container_name: "UsersServiceRedis"
     environment:
-      REDIS_PASSWORD: users_redis
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
     volumes:
       - users_redis_data:/data
@@ -39,9 +50,9 @@ services:
     image: mongo:latest
     container_name: "UsersServiceMongo"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: mongo_user
-      MONGO_INITDB_ROOT_PASSWORD: mongo_password
-      MONGO_INITDB_DATABASE: mongousersdb
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERS_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_USERS_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_USERS_DB}
     volumes:
       - users_mongo_data:/data/db
     ports:
@@ -62,10 +73,44 @@ services:
     build:
       context: .
       dockerfile: src/CommunicationService/CommunicationService.Presentation/Dockerfile
+    depends_on:
+      - communicationservicemongo
+      - rabbitmq
+    volumes:
+      - communication_local_data:/app/wwwroot
     ports:
       - 8082:8080
+
+  communicationservicemongo:
+    image: mongo:latest
+    container_name: "CommunicationServiceMongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_COMMUNICATION_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_COMMUNICATION_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_COMMUNICATION_DB}
+    volumes:
+      - communication_mongo_data:/data/db
+    ports:
+      - 27019:27017
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   users_pg_data:
   users_redis_data:
   users_mongo_data:
+  users_local_data:
+  communication_local_data:
+  communication_mongo_data:
+  rabbitmq_data:

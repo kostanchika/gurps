@@ -4,5 +4,6 @@
     {
         string GenerateAccessToken(int userId, string login, string role);
         string GenerateRefreshToken();
+        string? GetLoginFromToken(string token);
     }
 }

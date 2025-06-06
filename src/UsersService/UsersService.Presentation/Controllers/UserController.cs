@@ -5,6 +5,7 @@ using UsersService.Application.DTOs.Friend;
 using UsersService.Application.DTOs.Shared;
 using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.Interfaces.UseCases.Friend;
+using UsersService.Application.Interfaces.UseCases.User;
 
 namespace UsersService.Presentation.Controllers
 {
@@ -13,6 +14,7 @@ namespace UsersService.Presentation.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
+        private readonly IGetUserInfoUseCase _getUserInfoUseCase;
         private readonly IGetActiveFriendsUseCase _getActiveFriendsUseCase;
         private readonly IGetRecievedFriendRequestsUseCase _getRecievedFriendRequestsUseCase;
         private readonly IGetSentFriendRequestsUseCase _getSentFriendRequestsUseCase;
@@ -21,6 +23,7 @@ namespace UsersService.Presentation.Controllers
         private readonly ISearchCharactersUseCase _searchCharactersUseCase;
 
         public UserController(
+            IGetUserInfoUseCase getUserInfoUseCase,
             IGetActiveFriendsUseCase getActiveFriendsUseCase,
             IGetRecievedFriendRequestsUseCase getRecievedFriendRequestsUseCase,
             IGetSentFriendRequestsUseCase getSentFriendRequestsUseCase,
@@ -29,12 +32,27 @@ namespace UsersService.Presentation.Controllers
             ISearchCharactersUseCase searchCharactersUseCase
         )
         {
+            _getUserInfoUseCase = getUserInfoUseCase;
             _getActiveFriendsUseCase = getActiveFriendsUseCase;
             _getRecievedFriendRequestsUseCase = getRecievedFriendRequestsUseCase;
             _getSentFriendRequestsUseCase = getSentFriendRequestsUseCase;
             _respondFriendRequestUseCase = respondFriendRequestUseCase;
             _sendFriendRequestUseCase = sendFriendRequestUseCase;
             _searchCharactersUseCase = searchCharactersUseCase;
+        }
+
+        [HttpGet("{login}")]
+        public async Task<UserDto> GetUserInfo(
+            string login,
+            CancellationToken cancellationToken
+        )
+        {
+            var user = await _getUserInfoUseCase.ExecuteAsync(
+                login,
+                cancellationToken
+            );
+
+            return user;
         }
 
         [HttpGet("{login}/friend")]

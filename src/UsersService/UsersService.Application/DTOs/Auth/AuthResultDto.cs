@@ -4,6 +4,7 @@
         string AccessToken,
         string RefreshToken,
         int UserId,
+        string Login,
         string Username,
         string Role
     );

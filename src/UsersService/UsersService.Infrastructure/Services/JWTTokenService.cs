@@ -45,5 +45,35 @@ namespace UsersService.Infrastructure.Services
         {
             return Guid.NewGuid().ToString();
         }
+
+        public string? GetLoginFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.SecretKey);
+
+            try
+            {
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettings.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateLifetime = true
+                };
+
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+
+                var userLoginClaim = principal.FindFirst(ClaimTypes.Name);
+
+                return userLoginClaim?.Value;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
