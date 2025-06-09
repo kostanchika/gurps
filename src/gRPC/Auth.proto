@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package auth;
+
+option csharp_namespace = "UsersService";
+
+service Auth {
+	rpc ValidateToken (TokenRequest) returns (UserResponse);
+	rpc AreUsersFriend (FriendsRequest) returns (FriendsResponse);
+}
+
+message TokenRequest {
+	string token = 1;
+}
+
+message UserResponse {
+	string login = 1;
+}
+
+message FriendsRequest {
+	string firstLogin = 1;
+	string secondLogin = 2;
+}
+
+message FriendsResponse {
+	bool areFriend = 1;
+}
