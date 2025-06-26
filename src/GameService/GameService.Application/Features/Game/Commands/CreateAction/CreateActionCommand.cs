@@ -7,6 +7,7 @@ namespace GameService.Application.Features.Game.Commands.CreateAction
         Guid LobbyId,
         string Login,
         string Name,
+        string RecipientLogin,
         string Content,
         CharacterAttribute? Attribute,
         int? Dice

@@ -50,7 +50,10 @@ namespace GameService.Application.Features.Game.Commands.TakeAction
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.Login)
                 ?? throw new UserIsNotParticipantException(command.Login, command.LobbyId);
 
-            lastAction.Player = player;
+            if (lastAction.Player.Login != player.Login)
+            {
+                throw new InvalidGameStateException(lobby.Id);
+            }
 
             await _lobbyRepository.UpdateAsync(lobby, cancellationToken);
             await _lobbyRepository.SaveChangesAsync(cancellationToken);

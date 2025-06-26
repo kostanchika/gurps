@@ -50,12 +50,16 @@ namespace GameService.Application.Features.Game.Commands.CreateAction
                 throw new InvalidGameStateException(command.LobbyId);
             }
 
+            var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
+                ?? throw new UserIsNotParticipantException(command.RecipientLogin, lobby.Id);
+
             var action = new ActionEntity
             {
                 Name = command.Name,
                 Content = command.Content,
                 Attribute = command.Attribute,
                 HasAttribute = command.Attribute.HasValue,
+                Player = player,
                 Dice = command.Dice,
             };
 
