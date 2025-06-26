@@ -48,7 +48,7 @@ namespace GameService.Application.Features.Game.Commands.EndGame
 
             await _lobbyService.NotifyLobbyUpdatedAsync(command.LobbyId, cancellationToken);
 
-            // Удалить через минуту
+            await _lobbyRepository.RemoveAsync(lobby, cancellationToken);
 
             _logger.LogInformation("Start ending game with id = '{Id}'", command.LobbyId);
 
