@@ -12,7 +12,7 @@ namespace GameService.Domain.Entities
         public CharacterAttribute? Attribute { get; set; }
         public bool HasAttribute { get; set; }
 
-        public PlayerEntity Player { get; set; }
+        public PlayerEntity Player { get; set; } = null!;
         public int? PlayerDice { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
