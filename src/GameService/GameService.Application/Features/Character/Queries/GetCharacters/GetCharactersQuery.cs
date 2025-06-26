@@ -1,8 +1,11 @@
-﻿namespace UsersService.Application.DTOs.Character
+﻿using GameService.Application.Models;
+using GURPS.Character.Entities;
+using MediatR;
+
+namespace GameService.Application.Features.Character.Queries.GetCharacters
 {
-    public record CharacterFiltersDto(
+    public record GetCharactersQuery(
         string? UserLogin,
-        int? UserId,
         string? Name = "",
         string? World = "",
         string? Age = "",
@@ -16,5 +19,5 @@
         string? Religion = "",
         int Page = 1,
         int PageSize = 10
-    );
+    ) : IRequest<PagedResultDto<CharacterEntity>>;
 }

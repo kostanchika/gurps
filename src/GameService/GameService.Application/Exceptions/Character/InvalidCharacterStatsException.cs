@@ -1,4 +1,4 @@
-﻿namespace UsersService.Application.Exceptions.Character
+﻿namespace GameService.Application.Exceptions.Character
 {
     public class InvalidCharacterStatsException(string login)
         : BadRequestException(

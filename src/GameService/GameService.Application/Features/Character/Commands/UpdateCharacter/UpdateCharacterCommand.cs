@@ -1,13 +1,16 @@
 ﻿using GURPS.Character.Entities.CharacterProperties;
+using MediatR;
 
-namespace UsersService.Application.DTOs.Character
+namespace GameService.Application.Features.Character.Commands.UpdateCharacter
 {
-    public record CreateCharacterDto(
+    public record UpdateCharacterCommand(
+        string Login,
+        Guid CharacterId,
         string Name,
         string Base64Avatar,
         string World,
         string History,
         Appearence Appearence,
         Attributes Attributes
-    );
+    ) : IRequest<Guid>;
 }
