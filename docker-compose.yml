@@ -67,6 +67,18 @@ services:
     ports:
       - 8081:8080
 
+  gameservicemongo:
+    image: mongo:latest
+    container_name: "GameServiceMongo"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_GAME_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_GAME_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_GAME_DB}
+    volumes:
+      - game_mongo_data:/data/db
+    ports:
+      - 27018:27017
+
   communicationservice:
     image: ${DOCKER_REGISTRY-}gurps/communication-service
     container_name: "CommunicationService"
@@ -111,6 +123,7 @@ volumes:
   users_redis_data:
   users_mongo_data:
   users_local_data:
+  game_mongo_data:
   communication_local_data:
   communication_mongo_data:
   rabbitmq_data:
