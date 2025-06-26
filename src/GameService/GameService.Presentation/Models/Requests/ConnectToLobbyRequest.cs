@@ -1,7 +1,7 @@
 ﻿namespace GameService.Presentation.Models.Requests
 {
     public record ConnectToLobbyRequest(
-        int CharacterId,
+        Guid CharacterId,
         string? Password
     );
 }

@@ -1,4 +1,5 @@
-﻿using GameService.Application.Exceptions.Game;
+﻿using GameService.Application.Exceptions.Character;
+using GameService.Application.Exceptions.Game;
 using GameService.Application.Exceptions.Lobby;
 using GameService.Application.Interfaces.Repositories;
 using GameService.Application.Interfaces.Services;
@@ -13,6 +14,7 @@ namespace GameService.Application.Features.Game.Commands.GiveItem
     {
         private readonly ILobbyRepository _lobbyRepository;
         private readonly IConfirmationService _confirmationService;
+        private readonly ICharacterRepository _characterRepository;
         private readonly INotificationSender _notificationSender;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger<GiveItemHandler> _logger;
@@ -20,6 +22,7 @@ namespace GameService.Application.Features.Game.Commands.GiveItem
         public GiveItemHandler(
             ILobbyRepository lobbyRepository,
             IConfirmationService confirmationService,
+            ICharacterRepository characterRepository,
             INotificationSender notificationSender,
             ILobbyService lobbyService,
             ILogger<GiveItemHandler> logger
@@ -27,6 +30,7 @@ namespace GameService.Application.Features.Game.Commands.GiveItem
         {
             _lobbyRepository = lobbyRepository;
             _confirmationService = confirmationService;
+            _characterRepository = characterRepository;
             _notificationSender = notificationSender;
             _lobbyService = lobbyService;
             _logger = logger;
@@ -47,7 +51,8 @@ namespace GameService.Application.Features.Game.Commands.GiveItem
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
                 ?? throw new UserIsNotParticipantException(command.RecipientLogin, command.LobbyId);
 
-            var character = player.Character;
+            var character = await _characterRepository.GetByIdAsync(player.CharacterId, cancellationToken)
+                ?? throw new CharacterNotFoundException(player.CharacterId);
 
             if (character.Coins < command.Price)
             {
@@ -79,8 +84,8 @@ namespace GameService.Application.Features.Game.Commands.GiveItem
 
             if (result)
             {
-                player.Character.Coins -= command.Price;
-                player.Character.Inventory.Add(item);
+                character.Coins -= command.Price;
+                character.Inventory.Add(item);
 
                 var giveItemAction = new ActionEntity
                 {

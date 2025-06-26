@@ -67,6 +67,7 @@ namespace GameService.Presentation.Controllers
                 id,
                 login,
                 request.Name,
+                request.RecipientLogin,
                 request.Content,
                 request.Attribute,
                 request.Dice

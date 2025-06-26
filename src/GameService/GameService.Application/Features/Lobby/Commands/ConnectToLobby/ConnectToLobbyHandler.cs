@@ -11,19 +11,19 @@ namespace GameService.Application.Features.Lobby.Commands.ConnectToLobby
     public class ConnectToLobbyHandler : IRequestHandler<ConnectToLobbyCommand, Guid>
     {
         private readonly ILobbyRepository _lobbyRepository;
-        private readonly ICharacterService _characterService;
+        private readonly ICharacterRepository _characterRepository;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger<ConnectToLobbyHandler> _logger;
 
         public ConnectToLobbyHandler(
             ILobbyRepository lobbyRepository,
-            ICharacterService characterService,
+            ICharacterRepository characterRepository,
             ILobbyService lobbyService,
             ILogger<ConnectToLobbyHandler> logger
         )
         {
             _lobbyRepository = lobbyRepository;
-            _characterService = characterService;
+            _characterRepository = characterRepository;
             _lobbyService = lobbyService;
             _logger = logger;
         }
@@ -61,20 +61,20 @@ namespace GameService.Application.Features.Lobby.Commands.ConnectToLobby
                 throw new LobbyIsInGameException();
             }
 
-            var character = await _characterService.GetCharacterAsync(
+            var character = await _characterRepository.GetByIdAsync(
                 command.CharacterId,
                 cancellationToken
-            );
+            ) ?? throw new CharacterNotFoundException(command.CharacterId);
 
-            //if (character.UserLogin != command.Login)
-            //{
-            //throw new CharacterOwnershipException(command.Login, command.CharacterId);
-            //}
+            if (character.UserLogin != command.Login)
+            {
+                throw new CharacterOwnershipException(command.Login, command.CharacterId);
+            }
 
             var player = new PlayerEntity
             {
                 Login = command.Login,
-                Character = character,
+                CharacterId = character.Id,
             };
 
             lobby.Players.Add(player);

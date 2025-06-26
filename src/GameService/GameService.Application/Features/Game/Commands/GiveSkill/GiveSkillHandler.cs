@@ -1,4 +1,5 @@
-﻿using GameService.Application.Exceptions.Game;
+﻿using GameService.Application.Exceptions.Character;
+using GameService.Application.Exceptions.Game;
 using GameService.Application.Exceptions.Lobby;
 using GameService.Application.Interfaces.Repositories;
 using GameService.Application.Interfaces.Services;
@@ -12,6 +13,7 @@ namespace GameService.Application.Features.Game.Commands.GiveSkill
     public class GiveSkillHandler : IRequestHandler<GiveSkillCommand, Unit>
     {
         private readonly ILobbyRepository _lobbyRepository;
+        private readonly ICharacterRepository _characterRepository;
         private readonly IConfirmationService _confirmationService;
         private readonly INotificationSender _notificationSender;
         private readonly ILobbyService _lobbyService;
@@ -19,6 +21,7 @@ namespace GameService.Application.Features.Game.Commands.GiveSkill
 
         public GiveSkillHandler(
             ILobbyRepository lobbyRepository,
+            ICharacterRepository characterRepository,
             IConfirmationService confirmationService,
             INotificationSender notificationSender,
             ILobbyService lobbyService,
@@ -26,6 +29,7 @@ namespace GameService.Application.Features.Game.Commands.GiveSkill
         )
         {
             _lobbyRepository = lobbyRepository;
+            _characterRepository = characterRepository;
             _confirmationService = confirmationService;
             _notificationSender = notificationSender;
             _lobbyService = lobbyService;
@@ -52,12 +56,13 @@ namespace GameService.Application.Features.Game.Commands.GiveSkill
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
                 ?? throw new UserIsNotParticipantException(command.RecipientLogin, command.LobbyId);
 
-            if (player.Character.SummaryPoints < command.Points)
-            {
-                throw new NotEnoughPointsException(player.Character.Id);
-            }
+            var character = await _characterRepository.GetByIdAsync(player.CharacterId, cancellationToken)
+                ?? throw new CharacterNotFoundException(player.CharacterId);
 
-            var character = player.Character;
+            if (character.SummaryPoints < command.Points)
+            {
+                throw new NotEnoughPointsException(character.Id);
+            }
 
             var skill = new Skill
             {
@@ -74,7 +79,7 @@ namespace GameService.Application.Features.Game.Commands.GiveSkill
 
             if (result)
             {
-                player.Character.SummaryPoints -= command.Points;
+                character.SummaryPoints -= command.Points;
 
                 character.Skills.Add(skill);
 

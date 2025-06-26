@@ -1,4 +1,5 @@
-﻿using GameService.Application.Exceptions.Game;
+﻿using GameService.Application.Exceptions.Character;
+using GameService.Application.Exceptions.Game;
 using GameService.Application.Exceptions.Lobby;
 using GameService.Application.Interfaces.Repositories;
 using GameService.Application.Interfaces.Services;
@@ -10,18 +11,21 @@ namespace GameService.Application.Features.Game.Commands.GiveCoins
     public class GiveCoinsHandler : IRequestHandler<GiveCoinsCommand, Unit>
     {
         private readonly ILobbyRepository _lobbyRepository;
+        private readonly ICharacterRepository _characterRepository;
         private readonly ILobbyService _lobbyService;
         private readonly INotificationSender _notificationSender;
         private readonly ILogger<GiveCoinsHandler> _logger;
 
         public GiveCoinsHandler(
             ILobbyRepository lobbyRepository,
+            ICharacterRepository characterRepository,
             ILobbyService lobbyService,
             INotificationSender notificationSender,
             ILogger<GiveCoinsHandler> logger
         )
         {
             _lobbyRepository = lobbyRepository;
+            _characterRepository = characterRepository;
             _lobbyService = lobbyService;
             _notificationSender = notificationSender;
             _logger = logger;
@@ -47,7 +51,8 @@ namespace GameService.Application.Features.Game.Commands.GiveCoins
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
                 ?? throw new UserIsNotParticipantException(command.RecipientLogin, command.LobbyId);
 
-            var character = player.Character;
+            var character = await _characterRepository.GetByIdAsync(player.CharacterId, cancellationToken)
+                ?? throw new CharacterNotFoundException(player.CharacterId);
 
             if (lobby.IsEnded)
             {

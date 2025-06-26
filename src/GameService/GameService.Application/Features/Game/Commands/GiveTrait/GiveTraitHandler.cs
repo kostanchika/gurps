@@ -1,4 +1,5 @@
-﻿using GameService.Application.Exceptions.Game;
+﻿using GameService.Application.Exceptions.Character;
+using GameService.Application.Exceptions.Game;
 using GameService.Application.Exceptions.Lobby;
 using GameService.Application.Interfaces.Repositories;
 using GameService.Application.Interfaces.Services;
@@ -13,6 +14,7 @@ namespace GameService.Application.Features.Game.Commands.GiveTrait
     {
         private readonly ILobbyRepository _lobbyRepository;
         private readonly IConfirmationService _confirmationService;
+        private readonly ICharacterRepository _characterRepository;
         private readonly INotificationSender _notificationSender;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger<GiveTraitHandler> _logger;
@@ -20,6 +22,7 @@ namespace GameService.Application.Features.Game.Commands.GiveTrait
         public GiveTraitHandler(
             ILobbyRepository lobbyRepository,
             IConfirmationService confirmationService,
+            ICharacterRepository characterRepository,
             INotificationSender notificationSender,
             ILobbyService lobbyService,
             ILogger<GiveTraitHandler> logger
@@ -27,6 +30,7 @@ namespace GameService.Application.Features.Game.Commands.GiveTrait
         {
             _lobbyRepository = lobbyRepository;
             _confirmationService = confirmationService;
+            _characterRepository = characterRepository;
             _notificationSender = notificationSender;
             _lobbyService = lobbyService;
             _logger = logger;
@@ -52,12 +56,13 @@ namespace GameService.Application.Features.Game.Commands.GiveTrait
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
                 ?? throw new UserIsNotParticipantException(command.RecipientLogin, command.LobbyId);
 
-            if (player.Character.SummaryPoints < command.Points)
-            {
-                throw new NotEnoughPointsException(player.Character.Id);
-            }
+            var character = await _characterRepository.GetByIdAsync(player.CharacterId, cancellationToken)
+                ?? throw new CharacterNotFoundException(player.CharacterId);
 
-            var character = player.Character;
+            if (character.SummaryPoints < command.Points)
+            {
+                throw new NotEnoughPointsException(player.CharacterId);
+            }
 
             var trait = new Trait
             {
@@ -74,9 +79,9 @@ namespace GameService.Application.Features.Game.Commands.GiveTrait
 
             if (result)
             {
-                player.Character.SummaryPoints -= command.Points;
+                character.SummaryPoints -= command.Points;
 
-                player.Character.Traits.Add(trait);
+                character.Traits.Add(trait);
 
                 var giveTraitAction = new ActionEntity
                 {

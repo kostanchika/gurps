@@ -1,4 +1,5 @@
-﻿using GameService.Application.Exceptions.Game;
+﻿using GameService.Application.Exceptions.Character;
+using GameService.Application.Exceptions.Game;
 using GameService.Application.Exceptions.Lobby;
 using GameService.Application.Interfaces.Repositories;
 using GameService.Application.Interfaces.Services;
@@ -11,16 +12,19 @@ namespace GameService.Application.Features.Game.Commands.CreateFatigue
     public class CreateFatigueHandler : IRequestHandler<CreateFatigueCommand, Unit>
     {
         private readonly ILobbyRepository _lobbyRepository;
+        private readonly ICharacterRepository _characterRepository;
         private readonly ILobbyService _lobbyService;
         private readonly ILogger<CreateFatigueHandler> _logger;
 
         public CreateFatigueHandler(
             ILobbyRepository lobbyRepository,
+            ICharacterRepository characterRepository,
             ILobbyService lobbyService,
             ILogger<CreateFatigueHandler> logger
         )
         {
             _lobbyRepository = lobbyRepository;
+            _characterRepository = characterRepository;
             _lobbyService = lobbyService;
             _logger = logger;
         }
@@ -49,7 +53,8 @@ namespace GameService.Application.Features.Game.Commands.CreateFatigue
             var player = lobby.Players.FirstOrDefault(p => p.Login == command.RecipientLogin)
                 ?? throw new UserIsNotParticipantException(command.RecipientLogin, command.LobbyId);
 
-            var character = player.Character;
+            var character = await _characterRepository.GetByIdAsync(player.CharacterId, cancellationToken)
+                ?? throw new CharacterNotFoundException(player.CharacterId);
 
             var fatigue = new FatigueAction
             {
