@@ -23,6 +23,7 @@ namespace GameService.Presentation
         public static void AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<ILobbyRepository, LobbyRepository>();
+            services.AddScoped<ICharacterRepository, CharacterRepository>();
         }
 
         public static void AddMongoDb(this IServiceCollection services, IConfiguration configuration) 

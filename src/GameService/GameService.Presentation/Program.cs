@@ -22,6 +22,19 @@ namespace GameService.Presentation
             builder.Services.ConfigureSingalR();
             builder.Services.ConfigureGrpc(builder.Configuration);
 
+            builder.Services.AddScoped<IImageService, PNGImageService>();
+            builder.Services.AddScoped<ICharacterManager, CharacterManager>();
+            builder.Services.AddScoped<ICharacterCalculator, CharacterCalculator>();
+            builder.Services.AddSingleton<ICharacterConfigurationProvider, JSONCharacterConfigurationProvider>(
+                (serviceProvider) =>
+                {
+                    var characterSettings = builder.Configuration.GetSection("Character").Get<CharacterSettings>()
+                        ?? throw new Exception("Character section is missing or bad configured");
+
+                    return new JSONCharacterConfigurationProvider(characterSettings.SettingsPath);
+                }
+            );
+
             builder.Services.AddControllers();
 
             builder.Services.AddAuthentication(options =>
