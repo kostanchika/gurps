@@ -1,6 +1,8 @@
 using CommunicationService.Infrastracture.Implementations.ChatService;
 using CommunicationService.Infrastracture.Implementations.NotificationService;
 using CommunicationService.Presentation.Middlewares;
+using Serilog;
+using Serilog.Sinks.Network;
 using UsersService.Presentation.Middlewares;
 
 namespace CommunicationService.Presentation
@@ -10,6 +12,20 @@ namespace CommunicationService.Presentation
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            var elasticUri = builder.Configuration["Elastic:Uri"]
+                ?? throw new Exception("Elastic section is missing or bad configured");
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithThreadId()
+                .WriteTo.Console()
+                .WriteTo.TCPSink(elasticUri)
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
 
             builder.Services.AddPersistense(builder.Configuration);
             builder.Services.AddMediatR();
