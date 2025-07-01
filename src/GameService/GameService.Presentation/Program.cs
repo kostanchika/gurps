@@ -1,3 +1,5 @@
+using Serilog;
+using Serilog.Sinks.Network;
 using GameService.Application.Interfaces.Services;
 using GameService.Presentation.Middlewares;
 using GURPS.Character.Providers.Configuration;
@@ -14,6 +16,20 @@ namespace GameService.Presentation
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var elasticUri = builder.Configuration["Elastic:Uri"]
+                ?? throw new Exception("Elastic section is missing or bad configured");
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithThreadId()
+                .WriteTo.Console()
+                .WriteTo.TCPSink(elasticUri)
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+            
             builder.Services.AddMediatR();
             builder.Services.AddMappers();
             builder.Services.AddMongoDb(builder.Configuration);

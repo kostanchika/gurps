@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using Serilog;
+using Serilog.Sinks.Network;
 using StackExchange.Redis;
 using System.Net;
 using System.Net.Mail;
@@ -53,6 +55,21 @@ namespace UsersService.Presentation
             });
 
             builder.Services.AddControllers();
+
+            var elasticUri = builder.Configuration["Elastic:Uri"]
+                ?? throw new Exception("Elastic section is missing or bad configured");
+
+            // Logging
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithThreadId()
+                .WriteTo.Console()
+                .WriteTo.TCPSink(elasticUri)
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
 
             // Connections
             builder.Services.AddDbContext<UsersContext>(options =>
