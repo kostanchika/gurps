@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\GURPS.Character\GURPS.Character.csproj" />
+  </ItemGroup>
+
 </Project>

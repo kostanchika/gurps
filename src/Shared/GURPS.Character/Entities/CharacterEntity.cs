@@ -4,8 +4,8 @@ namespace GURPS.Character.Entities
 {
     public class CharacterEntity
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        public Guid Id { get; set; }
+        public string UserLogin { get; set; } = null!;
         public string Name { get; set; } = "";
         public string AvatarPath { get; set; } = "";
         public string World { get; set; } = "";
