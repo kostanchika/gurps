@@ -229,6 +229,7 @@ namespace UsersService.Presentation
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
+                Authorization = [new AllowLocalAuthorizationFilter()]
             });
 
             app.UseAuthentication();
