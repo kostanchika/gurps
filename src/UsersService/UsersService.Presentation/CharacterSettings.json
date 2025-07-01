@@ -1,0 +1,48 @@
+{
+  "StartPoints": 100,
+  "StartCoins": 10,
+  "DefaultAttributes": {
+    "Strength": 10,
+    "Dexterity": 10,
+    "Intelligence": 10,
+    "Health": 10,
+    "HealthPoints": 0,
+    "Move": 0,
+    "Speed": 0,
+    "Will": 0,
+    "Perception": 0,
+    "Fatigue": 0
+  },
+  "AttributePrices": {
+    "Strength": 10,
+    "Dexterity": 10,
+    "Intelligence": 10,
+    "Health": 10,
+    "HealthPoints": 2,
+    "Move": 5,
+    "Speed": 20,
+    "Will": 5,
+    "Perception": 5,
+    "Fatigue": 3
+  },
+  "Coefficients": {
+    "HealthPoints": {
+      "Strength": 1
+    },
+    "Move": {
+    },
+    "Speed": {
+      "Dexterity": 0.25,
+      "Health": 0.25
+    },
+    "Will": {
+      "Intelligence": 1
+    },
+    "Perception": {
+      "Intelligence": 1
+    },
+    "Fatigue": {
+      "Health": 1
+    }
+  }
+}

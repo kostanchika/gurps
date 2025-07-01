@@ -18,4 +18,8 @@
     <PackageReference Include="Serilog.Sinks.Network" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GameService.Infrastructure\GameService.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -21,11 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommunicationService.Infrastracture\CommunicationService.Infrastracture.csproj" />
+    <Folder Include="wwwroot\attachments\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\attachments\" />
+    <ProjectReference Include="..\CommunicationService.Infrastracture\CommunicationService.Infrastracture.csproj" />
   </ItemGroup>
 
 </Project>

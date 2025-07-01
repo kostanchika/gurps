@@ -1,6 +1,5 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using GURPS.Character.Entities;
 using GURPS.Character.Providers.Configuration;
 using GURPS.Character.Providers.Implementations;
 using GURPS.Character.Providers.Implementations.Providers.JSON;
@@ -18,19 +17,15 @@ using System.Net.Mail;
 using System.Text;
 using UsersService.Application.Interfaces.Services;
 using UsersService.Application.Interfaces.UseCases.Auth;
-using UsersService.Application.Interfaces.UseCases.Character;
 using UsersService.Application.Interfaces.UseCases.Friend;
 using UsersService.Application.Interfaces.UseCases.User;
 using UsersService.Application.Mappers.Shared;
 using UsersService.Application.UseCases.Auth;
-using UsersService.Application.UseCases.Character;
 using UsersService.Application.UseCases.Friend;
 using UsersService.Application.UseCases.User;
 using UsersService.Application.Validators.Auth;
 using UsersService.Domain.Entities;
 using UsersService.Domain.Interfaces;
-using UsersService.Infrastructure.Persistence.NoSQL;
-using UsersService.Infrastructure.Persistence.NoSQL.Configurations;
 using UsersService.Infrastructure.Persistence.Redis;
 using UsersService.Infrastructure.Persistence.Redis.Configurations;
 using UsersService.Infrastructure.Persistence.SQL;
@@ -99,7 +94,6 @@ namespace UsersService.Presentation
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
             builder.Services.AddScoped<IRepository<FriendshipEntity>, Repository<FriendshipEntity>>();
-            builder.Services.AddScoped<IRepository<CharacterEntity>, CharacterRepository>();
 
             // Settings
             builder.Services.Configure<JWTSettings>(builder.Configuration.GetSection("JWT"));
@@ -111,7 +105,6 @@ namespace UsersService.Presentation
                     settings.ResetPasswordCodeExpiry = TimeSpan.FromMinutes(settings.ResetPasswordCodeLifetimeMinutes);
                 });
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
-            builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("Mongo"));
             builder.Services.Configure<ImageSettings>(builder.Configuration.GetSection("Images"));
             builder.Services.Configure<CharacterSettings>(builder.Configuration.GetSection("Character"));
 
@@ -136,13 +129,6 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IGetSentFriendRequestsUseCase, GetSentFriendRequestsUseCase>();
             builder.Services.AddScoped<IRespondFriendRequestUseCase, RespondFriendRequestUseCase>();
             builder.Services.AddScoped<ISendFriendRequestUseCase, SendFriendRequestUseCase>();
-            // Character
-            builder.Services.AddScoped<ISearchCharactersUseCase, SearchCharactersUseCase>();
-            builder.Services.AddScoped<IGetPointsConfigurationUseCase, GetPointsConfigurationUseCase>();
-            builder.Services.AddScoped<IGetCharacterUseCase, GetCharacterUseCase>();
-            builder.Services.AddScoped<ICreateCharacterUseCase, CreateCharacterUseCase>();
-            builder.Services.AddScoped<IDeleteCharacterUseCase, DeleteCharacterUseCase>();
-            builder.Services.AddScoped<IUpdateCharacterUseCase, UpdateCharacterUseCase>();
 
             // User
             builder.Services.AddScoped<IGetUserInfoUseCase, GetUserInfoUseCase>();
@@ -153,7 +139,6 @@ namespace UsersService.Presentation
             builder.Services.AddScoped<IPasswordService, BCryptPasswordService>();
             builder.Services.AddScoped<IKeyValueManager, RedisKeyValueManager>();
             builder.Services.AddScoped<IImageService, PNGImageService>();
-            builder.Services.AddScoped<ICharacterManager, CharacterManager>();
             builder.Services.AddScoped<ICharacterCalculator, CharacterCalculator>();
             builder.Services.AddSingleton<ICharacterConfigurationProvider, JSONCharacterConfigurationProvider>(
                 (serviceProvider) =>
@@ -210,8 +195,6 @@ namespace UsersService.Presentation
 
             var redisSettings = builder.Configuration.GetSection("Redis").Get<RedisSettings>()
                 ?? throw new Exception("Redis section is missing or bad configured");
-            var mongoSettings = builder.Configuration.GetSection("Mongo").Get<MongoSettings>()
-                ?? throw new Exception("Mongo section is missing or bad configured");
             var imageSettings = builder.Configuration.GetSection("Images").Get<ImageSettings>()
                 ?? throw new Exception("Images section is missing or bad configured");
 
