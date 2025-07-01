@@ -4,9 +4,12 @@ using GURPS.Character.Providers.Configuration;
 using GURPS.Character.Providers.Implementations;
 using GURPS.Character.Providers.Implementations.Providers.JSON;
 using GURPS.Character.Providers.Interfaces;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Serilog;
@@ -31,6 +34,7 @@ using UsersService.Infrastructure.Persistence.Redis.Configurations;
 using UsersService.Infrastructure.Persistence.SQL;
 using UsersService.Infrastructure.Services;
 using UsersService.Infrastructure.Services.Configurations;
+using UsersService.Presentation.Filters;
 using UsersService.Presentation.Middlewares;
 
 namespace UsersService.Presentation
@@ -90,6 +94,18 @@ namespace UsersService.Presentation
                         ?? throw new Exception("Missing Mongo connection string")
                 );
             });
+
+            // Hangfire
+            builder.Services.AddHangfire(config =>
+                config.UsePostgreSqlStorage(options =>
+                {
+                    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                        ?? throw new Exception("Missing Postgres connection string");
+
+                    options.UseNpgsqlConnection(connectionString);
+                })
+            );
+            builder.Services.AddHangfireServer();
 
             // Repositories
             builder.Services.AddScoped<IRepository<UserEntity>, Repository<UserEntity>>();
@@ -164,6 +180,7 @@ namespace UsersService.Presentation
                         emailSettings.Password
                     )
                 });
+            builder.Services.AddScoped<IScheduledEmailService, HangfireEmailService>();
 
             // Middlewares
             builder.Services.AddScoped<ExceptionHandlingMiddleware>();
@@ -209,6 +226,11 @@ namespace UsersService.Presentation
             });
 
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = [new AllowLocalAuthorizationFilter()]
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

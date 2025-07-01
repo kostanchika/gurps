@@ -13,19 +13,19 @@ namespace UsersService.Application.UseCases.Auth
     {
         private readonly IRepository<UserEntity> _userRepository;
         private readonly IKeyValueManager _keyValueManager;
-        private readonly IEmailService _emailService;
+        private readonly IScheduledEmailService _scheduledEmailService;
         private readonly ILogger<IConfirmEmailUseCase> _logger;
 
         public ConfirmEmailUseCase(
             IRepository<UserEntity> userRepository,
             IKeyValueManager keyValueManager,
-            IEmailService emailService,
+            IScheduledEmailService scheduledEmailService,
             ILogger<IConfirmEmailUseCase> logger
         )
         {
             _userRepository = userRepository;
             _keyValueManager = keyValueManager;
-            _emailService = emailService;
+            _scheduledEmailService = scheduledEmailService;
             _logger = logger;
         }
 
@@ -54,10 +54,10 @@ namespace UsersService.Application.UseCases.Auth
             {
                 if (confirmationCode == null)
                 {
-                    confirmationCode = await _emailService.GenerateEmailCode(cancellationToken);
+                    confirmationCode = await _scheduledEmailService.GenerateEmailCode(cancellationToken);
 
                     await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, cancellationToken);
-                    await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
+                    await _scheduledEmailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
                 }
                 throw new EmailNotConfirmedException(user.Email);
             }

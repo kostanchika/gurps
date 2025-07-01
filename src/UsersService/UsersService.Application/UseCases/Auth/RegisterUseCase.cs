@@ -15,7 +15,7 @@ namespace UsersService.Application.UseCases.Auth
         private readonly IRepository<UserEntity> _userRepository;
         private readonly IPasswordService _passwordService;
         private readonly IKeyValueManager _keyValueManager;
-        private readonly IEmailService _emailService;
+        private readonly IScheduledEmailService _scheduledEmailService;
         private readonly IImageService _imageService;
         private readonly ILogger<IRegisterUseCase> _logger;
 
@@ -23,7 +23,7 @@ namespace UsersService.Application.UseCases.Auth
             IRepository<UserEntity> userRepository,
             IPasswordService passwordService,
             IKeyValueManager keyValueManager,
-            IEmailService emailService,
+            IScheduledEmailService scheduledEmailService,
             IImageService imageService,
             ILogger<IRegisterUseCase> logger
         )
@@ -31,7 +31,7 @@ namespace UsersService.Application.UseCases.Auth
             _userRepository = userRepository;
             _passwordService = passwordService;
             _keyValueManager = keyValueManager;
-            _emailService = emailService;
+            _scheduledEmailService = scheduledEmailService;
             _imageService = imageService;
             _logger = logger;
         }
@@ -87,10 +87,10 @@ namespace UsersService.Application.UseCases.Auth
             await _userRepository.AddAsync(user, cancellationToken);
             await _userRepository.SaveChangesAsync(cancellationToken);
 
-            var confirmationCode = await _emailService.GenerateEmailCode(cancellationToken);
+            var confirmationCode = await _scheduledEmailService.GenerateEmailCode(cancellationToken);
 
             await _keyValueManager.SetRegistrationCodeAsync(user.Login, confirmationCode, cancellationToken);
-            await _emailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
+            await _scheduledEmailService.SendRegistrationCodeAsync(user.Email, confirmationCode, cancellationToken);
 
             _logger.LogInformation(
                 "Successfully registered user with" +

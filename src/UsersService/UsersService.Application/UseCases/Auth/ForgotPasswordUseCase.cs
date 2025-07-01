@@ -13,19 +13,19 @@ namespace UsersService.Application.UseCases.Auth
     {
         private readonly IRepository<UserEntity> _userRepository;
         private readonly IKeyValueManager _keyValueManager;
-        private readonly IEmailService _emailService;
+        private readonly IScheduledEmailService _scheduledEmailService;
         private readonly ILogger<IForgotPasswordUseCase> _logger;
 
         public ForgotPasswordUseCase(
             IRepository<UserEntity> userRepository,
             IKeyValueManager keyValueManager,
-            IEmailService emailService,
+            IScheduledEmailService scheduledEmailService,
             ILogger<IForgotPasswordUseCase> logger
         )
         {
             _userRepository = userRepository;
             _keyValueManager = keyValueManager;
-            _emailService = emailService;
+            _scheduledEmailService = scheduledEmailService;
             _logger = logger;
         }
 
@@ -44,9 +44,9 @@ namespace UsersService.Application.UseCases.Auth
                 cancellationToken
             ) ?? throw new UserNotFoundException("Login", forgotPasswordDto.Login);
 
-            var resetPasswordCode = await _emailService.GenerateEmailCode(cancellationToken);
+            var resetPasswordCode = await _scheduledEmailService.GenerateEmailCode(cancellationToken);
             await _keyValueManager.SetResetPasswordCodeAsync(forgotPasswordDto.Login, resetPasswordCode, cancellationToken);
-            await _emailService.SendResetPasswordCodeAsync(user.Email, resetPasswordCode, cancellationToken);
+            await _scheduledEmailService.SendResetPasswordCodeAsync(user.Email, resetPasswordCode, cancellationToken);
 
             _logger.LogInformation(
                 "Successfully sent reset password code to user with Login = '{Login}'",
